@@ -1,0 +1,72 @@
+---
+/*
+  Breadcrumb mit BreadcrumbList-JSON-LD. Liegt in ui/, nicht in leistung/,
+  weil die Objekttyp-Seiten ihn genauso brauchen.
+
+  Trenner ist ein Chevron als Inline-SVG, kein Mittelpunkt: eine Kette aus
+  „A · B · C“ ist auf dieser Seite als Vorlagen-Muster ausgeschlossen, und
+  das Chevron liest sich ohnehin eindeutiger als Pfad.
+
+  Der letzte Eintrag ist die aktuelle Seite und kein Link — er bekommt
+  aria-current="page".
+*/
+interface Stufe {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  stufen: Stufe[];
+}
+
+const { stufen } = Astro.props;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: stufen.map((stufe, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: stufe.label,
+    ...(stufe.href ? { item: new URL(stufe.href, Astro.site).href } : {}),
+  })),
+};
+---
+
+<nav aria-label="Breadcrumb" class="wrap pt-6 md:pt-8">
+  <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 text-small text-grey">
+    {
+      stufen.map((stufe, i) => (
+        <li class="flex items-center gap-2">
+          {i > 0 && (
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+              class="shrink-0 text-line"
+            >
+              <path d="M9.5 6l6 6-6 6" />
+            </svg>
+          )}
+          {stufe.href ? (
+            <a href={stufe.href} class="textlink-hover">
+              {stufe.label}
+            </a>
+          ) : (
+            <span aria-current="page" class="text-ink">
+              {stufe.label}
+            </span>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />

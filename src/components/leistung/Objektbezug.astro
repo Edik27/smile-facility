@@ -1,0 +1,67 @@
+---
+import { objekttypen } from '../../data/objekttypen';
+import { OBJEKTTYP_SEITEN, objekttypHref } from '../../data/site';
+import SectionHeading from '../ui/SectionHeading.astro';
+
+/*
+  Für welche Objekte die Leistung in Frage kommt.
+
+  Solange /objekttypen/<slug> nicht existiert (OBJEKTTYP_SEITEN === false),
+  stehen die Objektarten als Text mit einem einzelnen Sammellink auf den
+  Abschnitt der Startseite. Fünf Links, die alle auf denselben Anker zeigen,
+  wären nur Redundanz — und tote Links sollen hier gar nicht entstehen.
+
+  Sobald die Unterseiten stehen, wird jede Objektart ihr eigener Link. Die
+  Weiche steht in src/data/site.ts, nicht hier.
+*/
+interface Props {
+  lead: string;
+  slugs: string[];
+}
+
+const { lead, slugs } = Astro.props;
+
+const typen = slugs
+  .map((slug) => objekttypen.find((t) => t.href.endsWith(`/${slug}`)))
+  .filter((t): t is NonNullable<typeof t> => Boolean(t))
+  .map((t) => ({ titel: t.titel, href: objekttypHref(t.href.split('/').pop()!) }));
+---
+
+<section class="sektion border-t border-line">
+  <div class="wrap grid gap-6 lg:grid-cols-12 lg:gap-16">
+    <div class="lg:col-span-4">
+      <SectionHeading titel="Für welche Objekte" />
+    </div>
+
+    <div class="lg:col-span-7 lg:col-start-6">
+      <p class="max-w-[62ch] text-lead text-grey">{lead}</p>
+
+      <ul class="mt-7 flex flex-col gap-3">
+        {
+          typen.map((typ) => (
+            <li class="flex gap-3 text-body text-ink">
+              <span class="mt-[0.6em] size-2 shrink-0 rounded-full bg-primary" aria-hidden="true" />
+              {OBJEKTTYP_SEITEN ? (
+                <a href={typ.href} class="textlink-hover">
+                  {typ.titel}
+                </a>
+              ) : (
+                <span>{typ.titel}</span>
+              )}
+            </li>
+          ))
+        }
+      </ul>
+
+      {
+        !OBJEKTTYP_SEITEN && (
+          <p class="mt-7">
+            <a href="/#objekttypen" class="textlink text-body">
+              Was sich je Objektart unterscheidet
+            </a>
+          </p>
+        )
+      }
+    </div>
+  </div>
+</section>

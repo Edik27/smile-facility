@@ -9,17 +9,29 @@ import Button from './ui/Button.astro';
   deshalb steht der Button in Weiß mit --primary-deep als Textfarbe.
   Die Klasse „on-primary“ schaltet den Fokusring auf --base, weil
   --primary-deep auf --primary unsichtbar wäre.
+
+  Die Leistungsseiten nutzen denselben Block mit eigener Überschrift und
+  eigenem Ziel-Href (?leistung=<slug>), damit die Anfrageseite die Leistung
+  vorauswählen kann. Deshalb Props statt einer zweiten Komponente — es soll
+  genau eine pinke Fläche geben, und die soll überall gleich aussehen.
 */
+interface Props {
+  titel?: string;
+  href?: string;
+}
+
+const {
+  titel = 'Angebot für Ihr Objekt — Begehung und Leistungsverzeichnis kostenlos.',
+  href = routes.anfrage,
+}: Props = Astro.props;
 ---
 
 <section class="on-primary bg-primary">
   <div class="wrap grid gap-10 py-16 md:py-24 lg:grid-cols-12 lg:items-end lg:gap-12">
-    <h2 class="text-cta font-heading font-bold text-surface lg:col-span-7">
-      Angebot für Ihr Objekt — Begehung und Leistungsverzeichnis kostenlos.
-    </h2>
+    <h2 class="text-cta font-heading font-bold text-surface lg:col-span-7">{titel}</h2>
 
     <div class="lg:col-span-5 lg:col-start-8">
-      <Button href={routes.anfrage} variant="onPrimary" class="w-full sm:w-auto">
+      <Button href={href} variant="onPrimary" class="w-full sm:w-auto">
         Angebot anfordern
       </Button>
 

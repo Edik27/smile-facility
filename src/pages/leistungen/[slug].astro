@@ -1,0 +1,84 @@
+---
+import CtaAbschluss from '../../components/CtaAbschluss.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+import Abstimmung from '../../components/leistung/Abstimmung.astro';
+import Enthalten from '../../components/leistung/Enthalten.astro';
+import Faq from '../../components/leistung/Faq.astro';
+import NichtEnthalten from '../../components/leistung/NichtEnthalten.astro';
+import Objektbezug from '../../components/leistung/Objektbezug.astro';
+import Turnus from '../../components/leistung/Turnus.astro';
+import WeitereLeistungen from '../../components/leistung/WeitereLeistungen.astro';
+import Breadcrumb from '../../components/ui/Breadcrumb.astro';
+import { leistungsSeiten } from '../../data/leistungen';
+import { routes } from '../../data/site';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+/*
+  Eine Route für alle Leistungsseiten. `getStaticPaths` speist sich aus
+  `leistungsSeiten` — dort steht nur, was inhaltlich fertig ist. Eine Leistung
+  ohne Inhaltsdatei erzeugt also keine halbe Seite, sondern gar keine.
+*/
+export function getStaticPaths() {
+  return leistungsSeiten.map((leistung) => ({
+    params: { slug: leistung.slug },
+    props: { leistung },
+  }));
+}
+
+const { leistung } = Astro.props;
+
+/* Leistung wird als Parameter durchgereicht — analog zu ?objekt= aus dem Hero. */
+const anfrageHref = `${routes.anfrage}?leistung=${leistung.slug}`;
+---
+
+<BaseLayout title={leistung.meta.title} description={leistung.meta.description}>
+  <Header />
+
+  <main id="inhalt">
+    <Breadcrumb
+      stufen={[
+        { label: 'Start', href: '/' },
+        { label: 'Leistungen', href: routes.leistungen },
+        { label: leistung.titel },
+      ]}
+    />
+
+    <div class="wrap pb-16 pt-8 md:pb-20 md:pt-10">
+      <h1 class="text-h1 font-heading font-bold text-ink">{leistung.titel}</h1>
+      <p class="mt-6 max-w-[58ch] text-lead text-grey">{leistung.lead}</p>
+    </div>
+
+    <Enthalten
+      lead={leistung.enthalten.lead}
+      gruppen={leistung.enthalten.gruppen}
+      turnusabhaengig={leistung.enthalten.turnusabhaengig}
+    />
+
+    <NichtEnthalten
+      lead={leistung.nichtEnthalten.lead}
+      punkte={leistung.nichtEnthalten.punkte}
+    />
+
+    <Turnus
+      lead={leistung.turnus.lead}
+      stufen={leistung.turnus.stufen}
+      zeitfenster={leistung.turnus.zeitfenster}
+    />
+
+    <Objektbezug lead={leistung.objekte.lead} slugs={leistung.objekte.slugs} />
+
+    <Abstimmung saetze={leistung.abstimmung} />
+
+    <Faq eintraege={leistung.faq} />
+
+    <WeitereLeistungen slug={leistung.slug} />
+
+    <CtaAbschluss
+      titel={`${leistung.titel} für Ihr Objekt — Begehung und Leistungsverzeichnis kostenlos.`}
+      href={anfrageHref}
+    />
+  </main>
+
+  <Footer />
+</BaseLayout>

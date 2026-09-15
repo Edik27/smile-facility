@@ -1,0 +1,47 @@
+---
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import Button from '../components/ui/Button.astro';
+import { routes, site } from '../data/site';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+/*
+  Schlicht gehalten: eine 404 ist kein Ort für Gestaltung, sondern für zwei
+  brauchbare Links. Kein Pink-Block — der bleibt dem Abschluss-CTA vorbehalten.
+
+  TODO: Der zweite Link zeigt auf den Leistungsabschnitt der Startseite,
+  solange /leistungen nicht existiert. Bei Fertigstellung des Hubs auf
+  routes.leistungen umstellen.
+*/
+const title = `Seite nicht gefunden | ${site.name}`;
+const description =
+  'Diese Adresse gibt es nicht. Von hier kommen Sie zur Startseite und zur Übersicht der Leistungen.';
+---
+
+<BaseLayout title={title} description={description}>
+  <Header />
+
+  <main id="inhalt">
+    <div class="wrap py-24 md:py-32">
+      <p class="text-small text-grey">Fehler 404</p>
+      <h1 class="mt-3 text-h1 font-heading font-bold text-ink">Diese Seite gibt es nicht.</h1>
+      <p class="mt-6 max-w-[54ch] text-lead text-grey">
+        Vielleicht hat sich die Adresse geändert oder ein Link zeigt ins Leere. Über die
+        Navigation oben kommen Sie überall hin, oder Sie beginnen hier:
+      </p>
+
+      <div class="mt-9 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
+        <Button href="/">Zur Startseite</Button>
+        <a href="/#leistungen" class="textlink text-body">Leistungen ansehen</a>
+      </div>
+
+      <p class="mt-12 max-w-[54ch] text-body text-grey">
+        Wenn Sie eine Anfrage stellen wollten: schreiben Sie an{' '}
+        <a href={`mailto:${site.email}`} class="textlink">{site.email}</a>, oder nutzen Sie das{' '}
+        <a href={routes.anfrage} class="textlink">Anfrageformular</a>.
+      </p>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>

@@ -1,0 +1,41 @@
+---
+import type { FaqEintrag } from '../../data/leistungen';
+import SectionHeading from '../ui/SectionHeading.astro';
+
+/*
+  Fragen und Antworten als Inhalt für Leser, nicht als SEO-Maßnahme:
+  FAQPage-Markup liefert seit 2023 für gewerbliche Seiten keine Rich Results
+  mehr, Google zeigt sie nur noch für behördliche und medizinische Quellen.
+  Deshalb bewusst ohne Schema-Markup.
+
+  Kein Akkordeon: das bräuchte JavaScript, und diese Seiten kommen wie die
+  Startseite ohne aus. Vier Fragen offen untereinander liest sich schneller
+  als vier, die man erst aufklappen muss.
+*/
+interface Props {
+  eintraege: FaqEintrag[];
+}
+
+const { eintraege } = Astro.props;
+---
+
+<section class="sektion border-t border-line">
+  <div class="wrap">
+    <SectionHeading titel="Fragen, die uns dazu erreichen" />
+
+    <dl class="mt-10 border-t border-line">
+      {
+        eintraege.map((eintrag) => (
+          <div class="grid gap-x-12 gap-y-2 border-b border-line py-8 lg:grid-cols-12">
+            <dt class="text-h3 font-heading font-semibold text-ink lg:col-span-5">
+              {eintrag.frage}
+            </dt>
+            <dd class="max-w-[62ch] text-body text-grey lg:col-span-6 lg:col-start-7">
+              {eintrag.antwort}
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>

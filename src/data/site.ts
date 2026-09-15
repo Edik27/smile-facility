@@ -55,6 +55,27 @@ export const site = {
   ustId: '[TODO: USt-IdNr. oder Steuernummer]',
 } as const;
 
+/*
+  ───────────────────────────────────────────────────────────────────────────
+  Eine Stelle für den Umstieg auf die Objekttyp-Unterseiten.
+
+  /objekttypen/<slug> existiert noch nicht. Solange das so ist, verweisen alle
+  Links auf den Objekttypen-Abschnitt der Startseite — die Leistungsseiten
+  sollen keine toten Links erzeugen.
+
+  Wenn die Unterseiten stehen: `OBJEKTTYP_SEITEN` auf true setzen. Das ändert
+  zwei Dinge auf einmal, weil `Objektbezug.astro` daran auch die Darstellung
+  hängt: solange false, stehen die Objektarten als Text mit einem einzelnen
+  Sammellink — fünf identische Links auf denselben Anker wären sonst nur
+  Redundanz. Ab true wird jede Objektart ihr eigener Link.
+  ───────────────────────────────────────────────────────────────────────────
+*/
+export const OBJEKTTYP_SEITEN = false;
+
+export function objekttypHref(slug: string): string {
+  return OBJEKTTYP_SEITEN ? `/objekttypen/${slug}` : '/#objekttypen';
+}
+
 export const routes = {
   anfrage: '/anfrage',
   karriere: '/karriere',

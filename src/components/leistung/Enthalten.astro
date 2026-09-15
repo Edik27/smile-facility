@@ -1,0 +1,52 @@
+---
+import type { Positionsgruppe } from '../../data/leistungen';
+import SectionHeading from '../ui/SectionHeading.astro';
+
+/*
+  Der Kern der Seite: Positionen, wie sie in einem Leistungsverzeichnis
+  stünden. Kein Kachelraster — Gruppenname links, Positionen rechts, 1px
+  Trennlinie zwischen den Gruppen.
+
+  Die einzige graue Fläche der Seite. Damit liegt das Gewicht dort, wo die
+  Frage beantwortet wird, und der Rest der Seite bleibt weiß.
+*/
+interface Props {
+  lead: string;
+  gruppen: Positionsgruppe[];
+  turnusabhaengig?: Positionsgruppe;
+}
+
+const { lead, gruppen, turnusabhaengig } = Astro.props;
+const alle = turnusabhaengig ? [...gruppen, turnusabhaengig] : gruppen;
+---
+
+<section id="enthalten" class="sektion bg-surface-alt">
+  <div class="wrap">
+    <SectionHeading titel="Was enthalten ist" lead={lead} />
+
+    <dl class="mt-12 border-t border-line">
+      {
+        alle.map((gruppe) => (
+          <div class="grid gap-x-12 gap-y-3 border-b border-line py-8 lg:grid-cols-12 lg:py-10">
+            <dt class="text-h3 font-heading font-semibold text-ink lg:col-span-4">
+              {gruppe.gruppe}
+            </dt>
+            <dd class="lg:col-span-7 lg:col-start-6">
+              <ul class="flex flex-col gap-3">
+                {gruppe.positionen.map((position) => (
+                  <li class="flex gap-3 text-body text-ink">
+                    <span
+                      class="mt-[0.6em] size-2 shrink-0 rounded-full bg-primary"
+                      aria-hidden="true"
+                    />
+                    <span class="max-w-[62ch]">{position}</span>
+                  </li>
+                ))}
+              </ul>
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>

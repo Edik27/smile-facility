@@ -1,0 +1,29 @@
+---
+import SectionHeading from '../ui/SectionHeading.astro';
+
+/*
+  Kurzfassung des Ablaufs, auf diese Leistung bezogen. Drei Sätze, nicht der
+  kopierte Vier-Schritte-Block der Startseite — der steht dort und wird von
+  hier verlinkt. Doppelter Inhalt auf zwei Seiten hilft niemandem und lässt
+  Hub und Unterseite in der Suche gegeneinander laufen.
+*/
+interface Props {
+  saetze: string[];
+}
+
+const { saetze } = Astro.props;
+---
+
+<section class="sektion border-t border-line">
+  <div class="wrap">
+    <SectionHeading titel="Wie die Abstimmung läuft" />
+
+    <div class="mt-8 flex max-w-[62ch] flex-col gap-4">
+      {saetze.map((satz) => <p class="text-body text-ink">{satz}</p>)}
+    </div>
+
+    <p class="mt-7">
+      <a href="/#ablauf" class="textlink text-body">Die vier Schritte im Überblick</a>
+    </p>
+  </div>
+</section>

@@ -1,0 +1,64 @@
+---
+import { routes } from '../../data/site';
+import { kacheln } from '../../data/leistungen';
+import SectionHeading from '../ui/SectionHeading.astro';
+
+/*
+  Was nicht enthalten ist. Steht bewusst direkt hinter dem Leistungsumfang:
+  es beantwortet die Frage, die sonst erst beim Angebotsvergleich auftaucht.
+
+  Jeder Punkt kann auf die Leistung verweisen, in die er stattdessen gehört —
+  das verhindert, dass die Abgrenzung wie ein Rückzug wirkt.
+*/
+interface Punkt {
+  text: string;
+  verweisSlug?: string;
+}
+
+interface Props {
+  lead: string;
+  punkte: Punkt[];
+}
+
+const { lead, punkte } = Astro.props;
+
+const verweis = (slug: string) => {
+  const kachel = kacheln.find((k) => k.slug === slug);
+  return kachel
+    ? { text: kachel.verweisText, href: `${routes.leistungen}/${slug}` }
+    : undefined;
+};
+---
+
+<section class="sektion border-t border-line">
+  <div class="wrap">
+    <SectionHeading titel="Was nicht enthalten ist" lead={lead} />
+
+    <ul class="mt-10 flex flex-col gap-5 rounded-img border border-line p-7 md:p-10">
+      {
+        punkte.map((punkt) => {
+          const ziel = punkt.verweisSlug ? verweis(punkt.verweisSlug) : undefined;
+          return (
+            <li class="flex gap-3">
+              <span
+                class="mt-[0.6em] size-2 shrink-0 rounded-full bg-primary"
+                aria-hidden="true"
+              />
+              <span class="max-w-[62ch] text-body text-ink">
+                {punkt.text}
+                {ziel && (
+                  <>
+                    {' '}
+                    <a href={ziel.href} class="textlink-hover">
+                      {ziel.text}
+                    </a>
+                  </>
+                )}
+              </span>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
+</section>
