@@ -18,7 +18,7 @@
   Wenn der Kunde eine offizielle liegende Lockup als SVG nachliefert, wird
   dieses Skript für das Logo überflüssig; die Icons bleiben.
 */
-import { mkdir, readdir } from 'node:fs/promises';
+import { mkdir, readdir, stat } from 'node:fs/promises';
 import sharp from 'sharp';
 
 const QUELLE = 'src/assets/marke';
@@ -136,9 +136,10 @@ async function logo() {
 }
 
 /*
-  Objektaufnahmen. Das Original liegt mit 5973px in src/assets/originale/ und
-  wird von nichts importiert — Astro würde daraus sonst Varianten bis zur
-  vollen Auflösung rechnen und knapp 13 MB in dist ablegen.
+  Objektaufnahmen. Das Master liegt mit 5973px in src/assets/originale/ und
+  wird von keiner Komponente importiert — Astro würde daraus sonst Varianten
+  bis zur vollen Auflösung rechnen und knapp 13 MB in dist ablegen. Dieses
+  Skript ist die einzige Stelle, die darauf zugreift.
 
   Hier entsteht daraus die Arbeitsdatei mit 1920px Breite. Das ist die längste
   Kante, die die Seite je braucht: unter 1024px läuft das Bild über die volle
@@ -146,6 +147,28 @@ async function logo() {
   Astro rechnet daraus AVIF, WebP und JPEG in fünf Breiten.
 */
 const FOTO_ORIGINAL = 'src/assets/originale/objekt-hero.jpg';
+
+/*
+  src/assets/originale/ ist nicht in Git (siehe .gitignore) — das Master liegt
+  mit 3,4 MB nur lokal. Die daraus abgeleiteten Dateien sind committet
+  (src/assets/objekt-hero.jpg, public/og-bild.jpg), der Build läuft also auch
+  ohne Master. Nur das Neuerzeugen geht dann nicht, und das soll den
+  restlichen Lauf nicht abbrechen.
+*/
+async function fotoVorhanden() {
+  try {
+    await stat(FOTO_ORIGINAL);
+    return true;
+  } catch {
+    console.warn(
+      `Übersprungen: ${FOTO_ORIGINAL} fehlt.\n` +
+        '  Das Master liegt außerhalb von Git. src/assets/objekt-hero.jpg und\n' +
+        '  public/og-bild.jpg bleiben unverändert — der Build funktioniert.\n' +
+        '  Zum Neuerzeugen die Originaldatei vom Kunden dort ablegen.',
+    );
+    return false;
+  }
+}
 
 async function fotos() {
   await sharp(FOTO_ORIGINAL)
@@ -222,7 +245,9 @@ async function icons() {
 }
 
 await logo();
-await fotos();
-await ogBild();
+if (await fotoVorhanden()) {
+  await fotos();
+  await ogBild();
+}
 await favicon();
 await icons();

@@ -2,3 +2,10 @@ node_modules/
 dist/
 .astro/
 .DS_Store
+
+# Bild-Master vom Kunden. Liegt nur lokal — 3,4 MB, und die daraus
+# abgeleiteten Dateien (src/assets/objekt-hero.jpg, public/og-bild.jpg)
+# sind committet. npm run assets ueberspringt die Schritte, wenn das
+# Master fehlt. Quellbilder der Objekttypen bleiben bewusst im Repo,
+# die braucht scripts/objekttypen-bilder.mjs bei jedem Lauf.
+src/assets/originale/
