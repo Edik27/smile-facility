@@ -1,0 +1,38 @@
+---
+import { ablauf } from '../data/ablauf';
+import SectionHeading from './ui/SectionHeading.astro';
+
+/*
+  Nummerierung ist hier inhaltlich korrekt, weil es eine Abfolge ist —
+  aber schlicht gesetzt: „Schritt 1“ in 15px Grau, kein „01“-Ornament.
+  Die Zeitachse ist eine 1px-Linie mit 8px-Punkten in --primary:
+  oben durchlaufend ab md, links vertikal darunter.
+*/
+---
+
+<section id="ablauf" class="sektion border-t border-line">
+  <div class="wrap">
+    <SectionHeading
+      titel="Wie die Zusammenarbeit läuft"
+      lead="Vier Schritte von der Anfrage bis zum laufenden Betrieb. Bis zum Angebot entstehen Ihnen keine Kosten."
+    />
+
+    <ol class="mt-12 grid lg:grid-cols-4 lg:gap-0">
+      {
+        ablauf.map((schritt, i) => (
+          <li
+            class="relative border-l border-line pb-9 pl-6 last:pb-0 lg:border-l-0 lg:border-t lg:pb-0 lg:pl-0 lg:pr-8 lg:pt-7"
+          >
+            <span
+              class="absolute left-0 top-2 size-2 -translate-x-1/2 rounded-full bg-primary lg:left-0 lg:top-0 lg:-translate-x-0 lg:-translate-y-1/2"
+              aria-hidden="true"
+            />
+            <p class="text-small text-grey">Schritt {i + 1}</p>
+            <h3 class="mt-1 text-h3 font-heading font-semibold text-ink">{schritt.titel}</h3>
+            <p class="mt-2 max-w-[42ch] text-body text-grey">{schritt.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>

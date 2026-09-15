@@ -1,0 +1,84 @@
+---
+import type { Objekttyp } from '../data/objekttypen';
+
+/*
+  Eine Objekttyp-Zeile: scharfes Foto links, Text rechts, auf --base.
+  Kein Kartencontainer, kein Schatten, kein Rahmen — die 1px-Linie zwischen
+  den Zeilen trennt.
+
+  Bild bleibt in jeder Zeile links, es alterniert nicht. Beim Überfliegen
+  einer Liste kostet ein wechselnder Bildrand Lesegeschwindigkeit, und die
+  Überschriften sollen auf einer Achse stehen.
+
+  Die Layoutklassen sitzen am <picture>, nicht am <img>: Grid-Kind ist das
+  <picture>, Klassen am <img> greifen für das Layout nicht.
+
+  Höhe ergibt sich aus dem Inhalt, keine min-height. Kein Layout-Shift, weil
+  das Seitenverhältnis per CSS gesetzt ist und width/height am <img> stehen.
+
+  3:2 statt 4:3, weil drei der fünf Quellen genau dieses Verhältnis haben und
+  die Bilder ungeschnitten laufen sollen — Begründung und Zahlen in
+  scripts/objekttypen-bilder.mjs.
+
+  Verlinkt ist nur der Textlink, nicht die ganze Zeile: ein Link mit
+  aussagekräftigem Namen („Mehr zu Büro- und Verwaltungsgebäuden“) ist besser
+  als eine zeilenbreite Klickfläche ohne eigenen Namen. Deshalb reagiert auch
+  nur er auf Hover.
+*/
+interface Props {
+  typ: Objekttyp;
+  /* Nur die erste Zeile lädt sofort, der Rest lazy. */
+  zuerst?: boolean;
+  /* Trennlinie oben — entfällt bei der ersten Zeile. */
+  linie?: boolean;
+}
+
+const { typ, zuerst = false, linie = true } = Astro.props;
+
+const basis = `/objekttypen/${typ.bild}`;
+
+/*
+  `sizes` rechnet die tatsächliche Anzeigebreite aus, statt pauschal 40vw
+  anzugeben: bei gedeckeltem Container sind es 435px, darunter
+  (Viewport − 64 Außenabstand − 48 Spaltenabstand) × 2/5. Ein zu großzügiges
+  `sizes` lässt den Browser die 960er-Datei auch dort laden, wo die 640er
+  reicht.
+*/
+const sizes =
+  '(min-width: 1264px) 435px, (min-width: 768px) calc((100vw - 112px) * 0.4), 100vw';
+---
+
+<li class={`py-10 md:py-14 ${linie ? 'border-t border-line' : ''}`}>
+  <div class="grid gap-5 md:grid-cols-[2fr_3fr] md:items-center md:gap-8 lg:gap-12">
+    <picture class="block">
+      <source
+        srcset={`${basis}-640.avif 640w, ${basis}-960.avif 960w`}
+        sizes={sizes}
+        type="image/avif"
+      />
+      <source
+        srcset={`${basis}-640.webp 640w, ${basis}-960.webp 960w`}
+        sizes={sizes}
+        type="image/webp"
+      />
+      <img
+        src={`${basis}-960.webp`}
+        alt={typ.alt}
+        width="960"
+        height="640"
+        loading={zuerst ? 'eager' : 'lazy'}
+        decoding="async"
+        fetchpriority={zuerst ? 'high' : undefined}
+        class="aspect-video w-full rounded-img bg-surface-alt object-cover md:aspect-[3/2]"
+      />
+    </picture>
+
+    <div>
+      <h3 class="text-h3 font-heading font-semibold text-ink">{typ.titel}</h3>
+      <p class="mt-3 max-w-[62ch] text-body text-grey">{typ.beschreibung}</p>
+      <p class="mt-4">
+        <a href={typ.href} class="textlink-hover text-body">{typ.linkText}</a>
+      </p>
+    </div>
+  </div>
+</li>

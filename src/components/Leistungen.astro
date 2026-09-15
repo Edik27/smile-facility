@@ -1,0 +1,50 @@
+---
+import { leistungen } from '../data/leistungen';
+import SectionHeading from './ui/SectionHeading.astro';
+
+/*
+  Das einzige Kartengrid der Seite. Keine Schatten — Trennung über 1px --line.
+  Hover-Signal ist die obere Kante, die auf --primary wechselt; zusätzlich
+  färbt sich die Überschrift auf --primary-deep. Sonst bewegt sich nichts.
+
+  Die Icons sind die vom Kunden gelieferten Illustrationen (freigestellt und
+  auf 96px gerechnet, siehe scripts/assets.mjs). alt="" — die Überschrift
+  benennt die Leistung bereits, das Icon trägt keine eigene Information.
+*/
+---
+
+<section id="leistungen" class="sektion bg-surface-alt">
+  <div class="wrap">
+    <SectionHeading
+      titel="Leistungen"
+      lead="Sechs Leistungsbereiche, einzeln oder als Paket im Leistungsverzeichnis Ihres Objekts."
+    />
+
+    <ul class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        leistungen.map((leistung) => (
+          <li>
+            <a
+              href={leistung.href}
+              class="group flex h-full flex-col rounded-card border border-line border-t-[3px] border-t-line bg-surface p-6 transition-[border-color] duration-150 hover:border-t-primary md:p-7"
+            >
+              <img
+                src={leistung.icon}
+                alt=""
+                width="96"
+                height="96"
+                loading="lazy"
+                decoding="async"
+                class="size-14"
+              />
+              <h3 class="mt-4 text-h3 font-heading font-semibold text-ink transition-[color] duration-150 group-hover:text-primary-deep">
+                {leistung.titel}
+              </h3>
+              <p class="mt-3 text-body text-grey">{leistung.nutzen}</p>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

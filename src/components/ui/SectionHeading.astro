@@ -1,0 +1,22 @@
+---
+/*
+  Sektionskopf: Überschrift links, optional ein Einordnungssatz darunter.
+  Bewusst ohne Label/Eyebrow über der Überschrift und ohne Zentrierung —
+  die Zielgruppe liest Leistungsverzeichnisse, keine Landingpages.
+*/
+interface Props {
+  id?: string;
+  titel: string;
+  lead?: string;
+  as?: 'h2' | 'h3';
+  size?: 'h2' | 'h3';
+}
+
+const { id, titel, lead, as: Tag = 'h2', size = 'h2' }: Props = Astro.props;
+const groesse = size === 'h2' ? 'text-h2' : 'text-h3';
+---
+
+<div class="max-w-[54ch]">
+  <Tag id={id} class={`${groesse} font-heading font-semibold text-ink`}>{titel}</Tag>
+  {lead && <p class="mt-4 text-lead text-grey">{lead}</p>}
+</div>

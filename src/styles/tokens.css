@@ -1,0 +1,35 @@
+/*
+  S.mile Facility Services — Design-Tokens.
+  Dies ist die EINZIGE Datei im Projekt, die Hex-Werte enthält.
+  Alles andere greift über Tailwind-Utilities (bg-primary, text-ink, …)
+  oder var(--token) darauf zu. Siehe src/styles/global.css für das Mapping.
+*/
+
+:root {
+  /* Signalfarbe. Flächen, Icons, Marker, große Headlines.
+     Kontrast auf Weiß: 4,29:1 — deshalb NIE für Text unter 24px. */
+  --primary: #ED1164;
+
+  /* Textfähiges Pink. Buttons, Links, Fokusring, alles unter 24px.
+     Kontrast auf Weiß: 5,8:1. */
+  --primary-deep: #C20D53;
+
+  /* Flächenpink. Genau eine Fläche auf der Startseite (Panel Immobilienverwaltungen). */
+  --primary-tint: #FDE8EF;
+
+  --ink: #121212;
+  --grey: #5A5A5E;
+  --line: #E6E6E8;
+  --base: #FFFFFF;
+  --base-alt: #F7F7F8;
+
+  /* Abgeleiteter Hover-Ton für gefüllte Buttons. Kein neuer Hex-Wert, sondern
+     --primary-deep leicht nach --ink verschoben. Begründung: Weiß auf --primary
+     erreicht nur 4,29:1 und würde bei Button-Labels die Kontrastregel brechen. */
+  --primary-press: color-mix(in oklab, var(--primary-deep) 86%, var(--ink));
+
+  /* Formensprache */
+  --r-btn: 9px;
+  --r-card: 10px;
+  --r-img: 12px;
+}

@@ -1,0 +1,95 @@
+---
+import { gebietKurz } from '../data/einsatzgebiet';
+import { footerSpalten, rechtlicheLinks } from '../data/navigation';
+import { site } from '../data/site';
+import LogoLockup from './ui/LogoLockup.astro';
+
+/*
+  Auf --ink. Pink ausschließlich in Hover-States.
+  Rechtliche Links ohne Mittelpunkt-Verkettung, nur mit Abstand gesetzt.
+*/
+---
+
+<footer class="on-ink bg-ink text-surface">
+  <div class="wrap py-16 md:py-20">
+    <div class="grid gap-10 md:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+      {
+        footerSpalten.map((spalte) => (
+          <nav aria-label={spalte.titel}>
+            <h2 class="text-small font-heading font-semibold text-surface">{spalte.titel}</h2>
+            <ul class="mt-4 flex flex-col gap-2.5">
+              {spalte.links.map((link) => (
+                <li>
+                  <a
+                    href={link.href}
+                    class="text-small text-line transition-[color] duration-150 hover:text-primary"
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))
+      }
+
+      <div>
+        <h2 class="text-small font-heading font-semibold text-surface">Kontakt</h2>
+        <address class="mt-4 flex flex-col gap-2.5 text-small not-italic text-line">
+          <span>{site.firmierung}<br />{site.ansprechperson}</span>
+          <span>{site.strasse}<br />{site.plz} {site.ort}</span>
+          <span>
+            {
+              site.telHref ? (
+                <a
+                  href={`tel:${site.telHref}`}
+                  class="transition-[color] duration-150 hover:text-primary"
+                >
+                  {site.telefon}
+                </a>
+              ) : (
+                site.telefon
+              )
+            }
+          </span>
+          <span>
+            <a
+              href={`mailto:${site.email}`}
+              class="transition-[color] duration-150 hover:text-primary"
+            >
+              {site.email}
+            </a>
+          </span>
+          <span>{site.bueroZeiten}</span>
+          <span>
+            Einsatzgebiet:{' '}
+            <a
+              href="/#einsatzgebiet"
+              class="transition-[color] duration-150 hover:text-primary">{gebietKurz}</a
+            >
+          </span>
+        </address>
+      </div>
+    </div>
+
+    <div class="mt-14 border-t border-grey pt-8">
+      <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+        <LogoLockup variant="light" groesse="footer" wortmarkeImmer />
+        <ul class="flex flex-wrap gap-x-7 gap-y-3">
+          {
+            rechtlicheLinks.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  class="text-small text-line transition-[color] duration-150 hover:text-primary"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>

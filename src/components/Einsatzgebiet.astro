@@ -1,0 +1,30 @@
+---
+import { einsatzgebietText } from '../data/einsatzgebiet';
+
+/*
+  Bewusst als Sidehead-Layout gesetzt — Überschrift links neben dem Text, nicht
+  darüber. Das ist das einzige Vorkommen dieses Musters auf der Seite und
+  verhindert, dass der Block wie eine weitere Sektion aus Kacheln oder Zeilen
+  aussieht. Reiner Fließtext, keine Liste, keine Ortsnamen als Badges:
+  „Wo arbeitet ihr“ ist eine Frage, die ein Satz beantwortet.
+
+  Stuttgart steht im ersten Satz, die Region folgt danach.
+*/
+---
+
+<section id="einsatzgebiet" class="sektion border-t border-line">
+  <div class="wrap grid gap-6 lg:grid-cols-12 lg:gap-16">
+    <div class="lg:col-span-4">
+      <h2 class="text-h2 font-heading font-semibold text-ink">Einsatzgebiet</h2>
+    </div>
+
+    <div class="lg:col-span-7 lg:col-start-6">
+      <p class="max-w-[58ch] text-lead text-ink">{einsatzgebietText.lead}</p>
+      {
+        einsatzgebietText.absaetze.map((absatz) => (
+          <p class="mt-5 max-w-[62ch] text-body text-grey">{absatz}</p>
+        ))
+      }
+    </div>
+  </div>
+</section>

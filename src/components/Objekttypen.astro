@@ -1,0 +1,64 @@
+---
+import { objekttypen, verwaltungen } from '../data/objekttypen';
+import ObjektZeile from './ObjektZeile.astro';
+import SectionHeading from './ui/SectionHeading.astro';
+
+/*
+  Fünf Zeilen auf --base, darunter das vollbreite --ink-Panel für
+  Immobilienverwaltungen.
+
+  Das Panel ist bewusst keine sechste Zeile: die Zielgruppe ist eine andere,
+  nicht eine weitere Objektart. Da die Reihe darüber durchgehend hell ist,
+  trägt die dunkle Fläche die Hervorhebung von allein — ohne dass Größe oder
+  Pink bemüht werden müssen. Damit ist --primary-tint als stehende Fläche von
+  der Seite verschwunden; Pink bleibt Signalfarbe in Punkten, Links und dem
+  einen Abschluss-CTA.
+
+  Das Panel liegt außerhalb von .wrap, damit es randlos läuft, und bringt
+  seinen eigenen .wrap für die Textausrichtung mit.
+*/
+---
+
+<section id="objekttypen" class="sektion">
+  <div class="wrap">
+    <SectionHeading
+      titel="Objekttypen"
+      lead="Wir arbeiten nicht überall gleich. Jede Objektart hat eigene Zeitfenster, Zutrittsregeln und Prüfpunkte."
+    />
+
+    <ul class="mt-10">
+      {
+        objekttypen.map((typ, i) => (
+          <ObjektZeile typ={typ} zuerst={i === 0} linie={i > 0} />
+        ))
+      }
+    </ul>
+  </div>
+
+  <div class="on-ink mt-6 bg-ink">
+    <div class="wrap grid gap-8 py-16 md:py-20 lg:grid-cols-12 lg:gap-12">
+      <div class="lg:col-span-6">
+        <h3 class="text-h2 font-heading font-semibold text-balance text-surface">
+          {verwaltungen.titel}
+        </h3>
+        <p class="mt-4 max-w-[42ch] text-lead text-surface">{verwaltungen.lead}</p>
+      </div>
+
+      <div class="lg:col-span-6 lg:col-start-7">
+        <ul class="flex flex-col gap-4">
+          {
+            verwaltungen.punkte.map((punkt) => (
+              <li class="flex gap-3 text-body text-line">
+                <span class="mt-[0.6em] size-2 shrink-0 rounded-full bg-primary" aria-hidden="true" />
+                <span class="max-w-[62ch]">{punkt}</span>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="mt-7">
+          <a href={verwaltungen.href} class="textlink-hell text-body">{verwaltungen.linkText}</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>

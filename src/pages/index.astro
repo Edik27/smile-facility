@@ -1,0 +1,40 @@
+---
+import Ablauf from '../components/Ablauf.astro';
+import Arbeitsweise from '../components/Arbeitsweise.astro';
+import CtaAbschluss from '../components/CtaAbschluss.astro';
+import Einsatzgebiet from '../components/Einsatzgebiet.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import KarriereTeaser from '../components/KarriereTeaser.astro';
+import Leistungen from '../components/Leistungen.astro';
+import Objekttypen from '../components/Objekttypen.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../data/site';
+
+/*
+  Title auf 60 Zeichen gehalten, damit Google ihn nicht abschneidet — deshalb
+  hier `einsatzstadt` („Stuttgart“) und nicht die Langform.
+  Description 154 Zeichen, ebenfalls innerhalb der Anzeigegrenze.
+*/
+const title = `Gebäudereinigung für Gewerbeimmobilien in ${site.einsatzstadt} | S.mile`;
+const description = `Unterhaltsreinigung, Glasreinigung und Hausmeisterservice für Gewerbeimmobilien in ${site.einsatzgebiet}. Feste Ansprechperson, kostenlose Objektbegehung.`;
+---
+
+<BaseLayout title={title} description={description}>
+  <Header />
+  <main id="inhalt">
+    <Hero />
+    <Leistungen />
+    <Objekttypen />
+    {/* „Wo arbeitet ihr“ ist die zweite Qualifizierungsfrage nach „für welche
+        Objekte“ — deshalb steht der Block hier und nicht am Seitenende. */}
+    <Einsatzgebiet />
+    <Ablauf />
+    <Arbeitsweise />
+    {/* Platz für einen späteren Referenzblock: <Referenzen /> gehört hierhin. */}
+    <KarriereTeaser />
+    <CtaAbschluss />
+  </main>
+  <Footer />
+</BaseLayout>

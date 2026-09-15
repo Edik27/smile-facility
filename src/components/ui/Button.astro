@@ -1,0 +1,41 @@
+---
+/*
+  Zwei Varianten, mehr braucht die Seite nicht:
+  - primary:    gefüllt in --primary-deep, auf weißem oder grauem Grund
+  - onPrimary:  weiß gefüllt, nur im pinken Abschluss-CTA
+
+  Hover bei „primary“ verdunkelt (--primary-press) statt auf --primary zu
+  wechseln: Weiß auf --primary erreicht 4,29:1 und würde die Kontrastregel
+  für Labels unter 24px verletzen.
+*/
+interface Props {
+  href?: string;
+  type?: 'button' | 'submit';
+  variant?: 'primary' | 'onPrimary';
+  class?: string;
+}
+
+const { href, type = 'button', variant = 'primary', class: klasse = '' } = Astro.props;
+
+const basis =
+  'inline-flex items-center justify-center rounded-btn font-heading font-semibold text-small px-5 py-3 transition-[background-color] duration-150';
+
+const varianten = {
+  primary: 'bg-primary-deep text-surface hover:bg-primary-press',
+  onPrimary: 'bg-surface text-primary-deep hover:bg-primary-tint',
+};
+
+const klassen = `${basis} ${varianten[variant]} ${klasse}`;
+---
+
+{
+  href ? (
+    <a href={href} class={klassen}>
+      <slot />
+    </a>
+  ) : (
+    <button type={type} class={klassen}>
+      <slot />
+    </button>
+  )
+}

@@ -1,0 +1,132 @@
+---
+import { Picture } from 'astro:assets';
+import objektFoto from '../assets/objekt-hero.jpg';
+import { routes, site } from '../data/site';
+import Button from './ui/Button.astro';
+
+/*
+  Zweispaltig: links Headline, Subline und drei Vertrauenssignale, rechts der
+  Einstieg ins Anfrageformular. Kein Foto mit Textüberlagerung.
+
+  Die Vertrauenssignale nennen ausschließlich Dinge, die am ersten Tag
+  zutreffen: Einsatzgebiet, kostenlose Begehung, Rückrufzusage. Keine Zahlen.
+
+  Das Formular ist ein reines GET-Formular auf /anfrage — die Auswahl wird als
+  ?objekt=… durchgereicht und dort vorausgewählt. Kein JavaScript nötig.
+
+  Zur Reihenfolge: die beiden Spalten-Wrapper stehen auf `display: contents`,
+  solange die Seite einspaltig ist. Dadurch werden alle fünf Blöcke zu direkten
+  Grid-Kindern und lassen sich für Mobil frei sortieren —
+  Headline, Subline, Formular, Vertrauenssignale, Bild. Das Formular bleibt bei
+  360×740 vollständig above the fold. Ab lg werden die Wrapper wieder zu
+  Spalten, und die DOM-Reihenfolge innerhalb der Spalten greift.
+*/
+
+const objektarten = [
+  { wert: 'buerogebaeude', label: 'Bürogebäude' },
+  { wert: 'handelsflaeche', label: 'Handelsfläche' },
+  { wert: 'industrie-logistik', label: 'Industrie und Logistik' },
+  { wert: 'praxis', label: 'Praxis' },
+  { wert: 'hotel-gastronomie', label: 'Hotel und Gastronomie' },
+  { wert: 'mehrere-objekte', label: 'Mehrere Objekte' },
+];
+
+const vertrauenssignale = [
+  `Im Einsatz in ${site.einsatzgebiet}`,
+  'Kostenlose Objektbegehung mit schriftlichem Leistungsverzeichnis',
+  'Rückruf innerhalb eines Werktags',
+];
+---
+
+<section class="pb-20 pt-9 md:pb-28 md:pt-16">
+  <div class="wrap grid items-start lg:grid-cols-12 lg:gap-x-16">
+    <div class="contents lg:col-span-6 lg:block lg:min-w-0">
+      <h1 class="hero-in hero-in-1 order-1 text-h1 font-heading font-bold text-ink">
+        <Fragment set:html="Gewerbe&shy;immobilien, um die Sie sich nicht kümmern müssen." />
+      </h1>
+
+      <p class="hero-in hero-in-2 order-2 mt-5 max-w-[54ch] text-lead text-grey md:mt-6">
+        Unterhaltsreinigung, Glasreinigung und Hausmeisterservice für Büro-, Handels- und
+        Logistikflächen in {site.einsatzgebiet}.
+      </p>
+
+      <ul class="hero-in hero-in-4 order-4 mt-9 flex flex-col gap-3 lg:mt-8">
+        {
+          vertrauenssignale.map((signal) => (
+            <li class="flex gap-3 text-body text-ink">
+              <span class="mt-[0.6em] size-2 shrink-0 rounded-full bg-primary" aria-hidden="true" />
+              <span class="max-w-[46ch]">{signal}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="contents lg:col-span-6 lg:block lg:min-w-0">
+      <!--
+        Objektaufnahme im Seitenverhältnis des Originals (3:2). Astro rechnet
+        daraus AVIF, WebP und JPEG in fünf Breiten; `sizes` beschreibt die
+        tatsächliche Anzeigebreite — 536px ab lg, darunter volle Spaltenbreite.
+        eager + fetchpriority, weil das Bild auf dem Desktop das LCP-Element ist.
+      -->
+      <!--
+        Der umschließende <div> trägt Reihenfolge und Abstand, nicht das Bild:
+        <Picture> setzt `class` auf das innere <img>, Grid-Kind ist aber das
+        <picture>-Element. Ohne diesen Wrapper landete das Bild auf Mobil
+        vor der Headline, weil <picture> ohne order auf 0 steht.
+      -->
+      <div class="order-5 mt-10 lg:mt-0">
+        <Picture
+          src={objektFoto}
+          formats={['avif', 'webp']}
+          widths={[480, 720, 960, 1440, 1920]}
+          sizes="(min-width: 1264px) 536px, (min-width: 1024px) calc(50vw - 64px), calc(100vw - 4rem)"
+          quality={64}
+          loading="eager"
+          fetchpriority="high"
+          alt="Flur in einem Bürogebäude mit Glastrennwänden und Teppichboden"
+          class="aspect-[3/2] w-full rounded-img object-cover"
+        />
+      </div>
+
+      <form
+        method="get"
+        action={routes.anfrage}
+        class="hero-in hero-in-3 order-3 mt-9 rounded-card border border-line bg-surface p-5 md:p-7 lg:relative lg:z-10 lg:-mt-20 lg:ml-12 lg:mr-0"
+      >
+        <label for="objektart" class="block text-h3 font-heading font-semibold text-ink">
+          Um welches Objekt geht es?
+        </label>
+        <p class="mt-2 text-small text-grey">Ihre Auswahl übernehmen wir in das Anfrageformular.</p>
+
+        <div class="relative mt-4">
+          <select
+            id="objektart"
+            name="objekt"
+            required
+            class="w-full appearance-none rounded-btn border border-line bg-surface py-3 pl-4 pr-11 text-body text-ink"
+          >
+            <option value="">Bitte auswählen</option>
+            {objektarten.map((art) => <option value={art.wert}>{art.label}</option>)}
+          </select>
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+            class="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-grey"
+          >
+            <path d="M6 9.5l6 6 6-6"></path>
+          </svg>
+        </div>
+
+        <Button type="submit" class="mt-3 w-full">Weiter</Button>
+      </form>
+    </div>
+  </div>
+</section>

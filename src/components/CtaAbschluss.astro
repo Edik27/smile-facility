@@ -1,0 +1,45 @@
+---
+import { routes, site } from '../data/site';
+import Button from './ui/Button.astro';
+
+/*
+  Der einzige vollflächige --primary-Block der Seite. Asymmetrisch statt
+  zentriert. Weiße Schrift ab 24px (text-cta beginnt bei 1,5rem) — bei
+  4,29:1 ist das für große Schrift zulässig, für kleinere Labels nicht,
+  deshalb steht der Button in Weiß mit --primary-deep als Textfarbe.
+  Die Klasse „on-primary“ schaltet den Fokusring auf --base, weil
+  --primary-deep auf --primary unsichtbar wäre.
+*/
+---
+
+<section class="on-primary bg-primary">
+  <div class="wrap grid gap-10 py-16 md:py-24 lg:grid-cols-12 lg:items-end lg:gap-12">
+    <h2 class="text-cta font-heading font-bold text-surface lg:col-span-7">
+      Angebot für Ihr Objekt — Begehung und Leistungsverzeichnis kostenlos.
+    </h2>
+
+    <div class="lg:col-span-5 lg:col-start-8">
+      <Button href={routes.anfrage} variant="onPrimary" class="w-full sm:w-auto">
+        Angebot anfordern
+      </Button>
+
+      <p class="mt-6 text-lead text-surface">
+        Oder rufen Sie an:{' '}
+        {
+          site.telHref ? (
+            <a
+              href={`tel:${site.telHref}`}
+              class="font-heading font-semibold text-surface underline decoration-1 underline-offset-4 hover:decoration-2"
+            >
+              {site.telefon}
+            </a>
+          ) : (
+            <span class="font-heading font-semibold text-surface">{site.telefon}</span>
+          )
+        }
+        <br />
+        <span class="text-small">{site.bueroZeiten}</span>
+      </p>
+    </div>
+  </div>
+</section>

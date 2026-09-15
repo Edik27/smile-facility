@@ -1,0 +1,55 @@
+---
+/*
+  Liegende Lockup aus Bildmarke und Wortmarke. Beide Dateien werden von
+  `npm run assets` aus src/assets/marke/logo.jpg abgeleitet: weiß freigestellt
+  und getrennt, weil das Original quadratisch mit gestapelter Wortmarke ist
+  und in einer 64–80px hohen Kopfzeile nicht lesbar wäre.
+
+  variant="light" zieht die Negativfassung für den Footer auf --ink: Augen und
+  Schriftzug in Weiß, Ring, Lächeln und das „S“ bleiben Magenta. Ohne das wären
+  die schwarzen Teile des Logos auf dunklem Grund unsichtbar.
+
+  Unter 640px wird nur die Bildmarke gezeigt: zusammen mit dem Button
+  „Angebot anfordern“ und dem Menü reicht die Breite bei 360px nicht für die
+  vollständige Lockup. `wortmarkeImmer` hebt das auf (Footer).
+*/
+interface Props {
+  variant?: 'dark' | 'light';
+  groesse?: 'header' | 'footer';
+  wortmarkeImmer?: boolean;
+}
+
+const { variant = 'dark', groesse = 'header', wortmarkeImmer = false } = Astro.props;
+
+const marke = variant === 'dark' ? '/logo/marke.png' : '/logo/marke-hell.png';
+const wortmarke = variant === 'dark' ? '/logo/wortmarke-dunkel.png' : '/logo/wortmarke-hell.png';
+const wortmarkeKlassen = wortmarkeImmer ? 'block' : 'hidden sm:block';
+
+/*
+  Die gestapelte Wortmarke setzt den Claim „FACILITY SERVICES“ sehr klein —
+  er ist im Original nur 13 % der Blockhöhe. Deshalb läuft die Wortmarke hier
+  bewusst am oberen Ende dessen, was die Kopfzeile hergibt, und im Footer
+  noch eine Stufe größer.
+*/
+const masse = {
+  header: { marke: 'h-10 w-auto md:h-11', wort: 'h-8 w-auto md:h-9' },
+  footer: { marke: 'h-11 w-auto', wort: 'h-9 w-auto' },
+}[groesse];
+---
+
+<span class="inline-flex items-center gap-3">
+  <img
+    src={marke}
+    alt="S.mile Facility Services"
+    width="99"
+    height="96"
+    class={masse.marke}
+  />
+  <img
+    src={wortmarke}
+    alt=""
+    width="189"
+    height="72"
+    class={`${masse.wort} ${wortmarkeKlassen}`}
+  />
+</span>
