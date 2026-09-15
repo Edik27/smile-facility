@@ -40,9 +40,13 @@ const basis = `/objekttypen/${typ.bild}`;
 /*
   `sizes` rechnet die tatsächliche Anzeigebreite aus, statt pauschal 40vw
   anzugeben: bei gedeckeltem Container sind es 435px, darunter
-  (Viewport − 64 Außenabstand − 48 Spaltenabstand) × 2/5. Ein zu großzügiges
-  `sizes` lässt den Browser die 960er-Datei auch dort laden, wo die 640er
-  reicht.
+  (Viewport − 64 Außenabstand − 48 Spaltenabstand) × 2/5, unter 768px die
+  volle Viewport-Breite. Ein zu großzügiges `sizes` lässt den Browser eine
+  größere Datei laden, als die Anzeigefläche braucht.
+
+  Die drei srcset-Stufen bedienen: 640 den Desktop bei einfacher Dichte und
+  kleine Telefone, 960 den Desktop bei doppelter Dichte, 1280 die mobile
+  Vollbreite bei dreifacher Dichte.
 */
 const sizes =
   '(min-width: 1264px) 435px, (min-width: 768px) calc((100vw - 112px) * 0.4), 100vw';
@@ -52,12 +56,12 @@ const sizes =
   <div class="grid gap-5 md:grid-cols-[2fr_3fr] md:items-center md:gap-8 lg:gap-12">
     <picture class="block">
       <source
-        srcset={`${basis}-640.avif 640w, ${basis}-960.avif 960w`}
+        srcset={`${basis}-640.avif 640w, ${basis}-960.avif 960w, ${basis}-1280.avif 1280w`}
         sizes={sizes}
         type="image/avif"
       />
       <source
-        srcset={`${basis}-640.webp 640w, ${basis}-960.webp 960w`}
+        srcset={`${basis}-640.webp 640w, ${basis}-960.webp 960w, ${basis}-1280.webp 1280w`}
         sizes={sizes}
         type="image/webp"
       />

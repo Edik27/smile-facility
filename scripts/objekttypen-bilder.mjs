@@ -4,7 +4,7 @@
 
   Pipeline je Quellbild:
     1. Ganzes Bild auf 3:2 (Seitenverhältnis von drei der fünf Quellen)
-    2. Ausgabebreiten 640 und 960 für srcset
+    2. Ausgabebreiten 640, 960 und 1280 für srcset
     3. Sättigung auf 0,7 — hält fünf verschieden temperierte Fotos zusammen,
        ohne wie ein Filter zu wirken
     4. AVIF mit WebP-Fallback (Parameter siehe unten)
@@ -39,15 +39,26 @@ const QUELLE = 'src/assets/objekttypen';
 const ZIEL = 'public/objekttypen';
 
 /*
-  Breiten: 640 und 960 statt 640 und 1280.
+  Breiten: 640, 960 und 1280. Es gibt zwei Anzeigefälle, und sie stellen
+  unterschiedliche Anforderungen — beide müssen hier stehen bleiben, sonst
+  wird die Liste beim nächsten Aufräumen wieder gekürzt.
 
+  Fall 1 — Desktop, zweispaltig ab 768px:
   Die Bildspalte ist bei gedeckeltem Container (1200px) rechnerisch 435px
   breit: (1200 − 64 Außenabstand − 48 Spaltenabstand) × 2/5. Bei doppelter
-  Pixeldichte werden daraus 870px — 960 deckt das mit Reserve ab, 1280 wäre
-  fast das Dreifache der Anzeigegröße. Mit 1280 lag das Fünferset bei 423 KB
-  und damit weit über dem Budget von 250 KB; sichtbar gewinnt es nichts.
+  Pixeldichte sind das 870px, die 960er deckt das ab.
+
+  Fall 2 — Mobil, unter 768px:
+  Dort läuft das Bild über die volle Viewport-Breite (`sizes` endet auf
+  100vw). Ein Telefon mit 430px CSS-Breite und dreifacher Pixeldichte fordert
+  rund 1290px an. Ohne die 1280er bekäme es die 960er und skalierte sie um
+  etwa ein Drittel hoch — sichtbar an den Kanten im Bild.
+
+  Die 960er bleibt, weil sie für Desktop bei doppelter Dichte und für mittlere
+  Viewports die passende Stufe ist: 1280 wäre dort fast das Dreifache der
+  Anzeigegröße.
 */
-const BREITEN = [640, 960];
+const BREITEN = [640, 960, 1280];
 const SAETTIGUNG = 0.7;
 
 /*
