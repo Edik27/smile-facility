@@ -25,11 +25,39 @@ const QUELLE = 'src/assets/marke';
 const ZIEL = 'public';
 
 /*
-  Schnittkanten im Original (1254×1254, ermittelt über das Nicht-Weiß-Profil):
-  Die Bildmarke endet bei y=748, direkt darunter beginnt das „S“ von S.mile.
+  Schnittkanten im Original (1254×1254).
+
+  WARUM EIN REINER ZEILENSCHNITT HIER NICHT REICHT:
+
+  Bildmarke und Wortmarke überlappen sich vertikal. Nachgemessen am
+  Nicht-Weiß-Profil, Segmente je Zeile:
+
+    y=748   [[551,724]]                 nur der Schwung
+    y=749   [[233,250], [554,719]]      „S“ setzt ein, Schwung läuft weiter
+    y=758   [[179,308], [618,663]]      beide noch da
+    y=759   [[177,312]]                 nur noch das „S“
+
+  Der Schwung der Bildmarke endet also bei y=758, das „S“ der Wortmarke
+  beginnt bei y=749 — zehn Zeilen Überlappung. Jeder waagerechte Schnitt in
+  diesem Band schneidet eines von beiden an:
+
+    Schnitt bei 748 → dem Smiley fehlt die Spitze des Schwungs
+    Schnitt bei 759 → ein pinker Strich des Schwungs steht über „mile“
+
+  Genau das war der Fehler im vorherigen Stand: marke endete bei 748
+  (abgeschnitten), wortmarke begann bei 749 (mit Schwungrest).
+
+  Waagerecht überlappen sie in diesem Band NICHT: das „S“ liegt bei x 179–308,
+  der Schwung bei x 554–719. Die Trennung läuft deshalb über die Senkrechte
+  TRENN_X = 450 — siehe `ueberlappMaskieren`.
 */
+const UEBERLAPP_VON = 749;
+const UEBERLAPP_BIS = 758;
+const TRENN_X = 450;
+
 const LOGO = {
-  marke: { left: 305, top: 86, width: 685, height: 663 },
+  /* y 86–758: Schwung vollständig, inklusive Überlappungsband. */
+  marke: { left: 305, top: 86, width: 685, height: 673 },
   wortmarke: { left: 81, top: 749, width: 1102, height: 419 },
 };
 
@@ -45,6 +73,10 @@ const LOGO = {
   für den Footer auf --ink. Das Magenta bleibt unangetastet.
 */
 const BOOST = 1.15;
+
+/* Eine Stelle für die PNG-Kompression, damit sie bei Umbauten nicht wieder
+   an einzelnen Schreibschritten verloren geht. */
+const PNG = { compressionLevel: 9, effort: 10 };
 
 async function weissFreistellen(eingabe, { aufhellen = false } = {}) {
   const bild = sharp(eingabe).ensureAlpha();
@@ -93,17 +125,55 @@ async function weissFreistellen(eingabe, { aufhellen = false } = {}) {
     raus[p * 4 + 3] = Math.round(a * 255);
   }
 
-  return sharp(raus, { raw: { width, height, channels: 4 } }).png({ compressionLevel: 9, effort: 10 });
+  return sharp(raus, { raw: { width, height, channels: 4 } }).png(PNG);
+}
+
+/*
+  Setzt im Überlappungsband (y 749–758) alles jenseits der Trennlinie
+  transparent. Eine Funktion für beide Fälle, gesteuert über `behalte`:
+
+    behalte: 'rechts'  Bildmarke  — löscht links von TRENN_X den Rest des „S“
+    behalte: 'links'   Wortmarke  — löscht rechts von TRENN_X den Schwungrest
+
+  Arbeitet auf dem bereits freigestellten Ausschnitt und rechnet die
+  Originalkoordinaten über `crop` in Ausschnittkoordinaten um.
+*/
+async function ueberlappMaskieren(eingabe, { crop, behalte }) {
+  const { data, info } = await sharp(eingabe)
+    .ensureAlpha()
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  const { width, height, channels } = info;
+  const raus = Buffer.from(data);
+
+  for (let y = 0; y < height; y++) {
+    const yOriginal = crop.top + y;
+    if (yOriginal < UEBERLAPP_VON || yOriginal > UEBERLAPP_BIS) continue;
+
+    for (let x = 0; x < width; x++) {
+      const xOriginal = crop.left + x;
+      const loeschen =
+        behalte === 'rechts' ? xOriginal < TRENN_X : xOriginal >= TRENN_X;
+      if (loeschen) raus[(y * width + x) * channels + 3] = 0;
+    }
+  }
+
+  return sharp(raus, { raw: { width, height, channels } }).png(PNG).toBuffer();
 }
 
 async function logo() {
   const quelle = `${QUELLE}/logo.jpg`;
   await mkdir(`${ZIEL}/logo`, { recursive: true });
 
-  // Bildmarke — quadratisch, in der Kopfzeile 44px, hier in doppelter Auflösung
+  // Bildmarke — in der Kopfzeile 44px, hier in doppelter Auflösung
   const markeRoh = await sharp(quelle).extract(LOGO.marke).png().toBuffer();
-  await (await weissFreistellen(markeRoh))
+  const markeFrei = await ueberlappMaskieren(
+    await (await weissFreistellen(markeRoh)).toBuffer(),
+    { crop: LOGO.marke, behalte: 'rechts' },
+  );
+  await sharp(markeFrei)
     .resize({ height: 96, fit: 'inside' })
+    .png(PNG)
     .toFile(`${ZIEL}/logo/marke.png`);
 
   /*
@@ -112,19 +182,34 @@ async function logo() {
     Freigestellt fällt diese Fläche weg, und Schwarz auf --ink ist unsichtbar.
     Aufgehellt bleiben Ring und Lächeln in Magenta, die Augen werden weiß.
   */
-  await (await weissFreistellen(markeRoh, { aufhellen: true }))
+  const markeHell = await ueberlappMaskieren(
+    await (await weissFreistellen(markeRoh, { aufhellen: true })).toBuffer(),
+    { crop: LOGO.marke, behalte: 'rechts' },
+  );
+  await sharp(markeHell)
     .resize({ height: 96, fit: 'inside' })
+    .png(PNG)
     .toFile(`${ZIEL}/logo/marke-hell.png`);
 
   // Wortmarke „S.mile FACILITY SERVICES“ — dunkel für weißen Grund
   const wortRoh = await sharp(quelle).extract(LOGO.wortmarke).png().toBuffer();
-  await (await weissFreistellen(wortRoh))
+  const wortDunkel = await ueberlappMaskieren(
+    await (await weissFreistellen(wortRoh)).toBuffer(),
+    { crop: LOGO.wortmarke, behalte: 'links' },
+  );
+  await sharp(wortDunkel)
     .resize({ height: 72, fit: 'inside' })
+    .png(PNG)
     .toFile(`${ZIEL}/logo/wortmarke-dunkel.png`);
 
   // … und hell für den Footer auf --ink
-  await (await weissFreistellen(wortRoh, { aufhellen: true }))
+  const wortHell = await ueberlappMaskieren(
+    await (await weissFreistellen(wortRoh, { aufhellen: true })).toBuffer(),
+    { crop: LOGO.wortmarke, behalte: 'links' },
+  );
+  await sharp(wortHell)
     .resize({ height: 72, fit: 'inside' })
+    .png(PNG)
     .toFile(`${ZIEL}/logo/wortmarke-hell.png`);
 
   // Vollständiges Logo, freigestellt — für JSON-LD und Social Sharing
