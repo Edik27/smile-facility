@@ -122,13 +122,18 @@
   }
 
   /*
-    Die Hero-Headline wird nicht automatisch getrennt: in Verbindung mit
-    text-wrap: balance setzt Chrome dort Trennstriche an unschönen Stellen.
-    Stattdessen steht im Text ein weiches Trennzeichen (&shy;) an der
-    fachlich richtigen Stelle — „Gewerbe-/immobilien“. `overflow-wrap: normal`
-    verhindert zusätzlich, dass das Wort ohne Trennstrich umbricht.
+    Nur die Hero-Headline der Startseite wird nicht automatisch getrennt: in
+    Verbindung mit text-wrap: balance setzt Chrome dort Trennstriche an
+    unschönen Stellen. Stattdessen steht im Text ein weiches Trennzeichen
+    (&shy;) an der fachlich richtigen Stelle — „Gewerbe-/immobilien“.
+
+    Die Regel hing vorher an `h1` und galt damit für jede Seite. Auf
+    /objekttypen/immobilienverwaltungen lief die H1 dadurch 46px über den
+    Viewport: das Wort ist 22 Zeichen lang, konnte nicht trennen und nicht
+    umbrechen. Alle übrigen H1 nutzen jetzt die automatische Trennung aus
+    der Regel oben.
   */
-  h1 {
+  .headline-hero {
     hyphens: manual;
     overflow-wrap: normal;
   }
@@ -246,18 +251,118 @@
     text-decoration-thickness: 2px;
   }
 
-  /* Mobiles Menü über <details> — kein JavaScript nötig. */
-  .burger > summary {
+  /*
+    Aufklappmenüs der Kopfzeile.
+
+    Sichtbarkeit steuert JavaScript über [data-offen]. Fällt das Skript aus,
+    bleibt `.kein-js` am <html> stehen und der :focus-within-Rückfall greift:
+    der Auslöser öffnet das Panel beim Fokussieren, die Links sind damit per
+    Tastatur erreichbar. Ohne diesen Rückfall wären die Unterseiten aus der
+    Kopfzeile gar nicht zu erreichen, weil der Auslöser ein Button ist.
+  */
+  .menue-panel {
+    display: none;
+    z-index: 10;
+    /*
+      Hier ist ein Schatten gewollt, abweichend von der Regel „keine
+      Schatten auf dieser Seite“: das Panel liegt über dem Inhalt, und der
+      Schatten trägt die Ebeneninformation. Eine Lage, weich, kein Stapel.
+    */
+    box-shadow: 0 12px 24px -8px rgb(0 0 0 / 0.14);
+  }
+
+  .menue[data-offen] > .menue-panel {
+    display: block;
+  }
+
+  .kein-js .menue:focus-within > .menue-panel {
+    display: block;
+  }
+
+  .menue[data-offen] > [data-ausloeser] {
+    color: var(--primary-deep);
+  }
+
+  .menue[data-offen] .menue-chevron {
+    transform: rotate(180deg);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .menue-chevron {
+      transition: transform 150ms ease;
+    }
+  }
+
+  /* Der Fokusring soll nicht über die Panelkante hinauslaufen. */
+  .menue-panel a:focus-visible {
+    outline-offset: -3px;
+  }
+
+  /*
+    Gemeinsame Basis für alle <details>/<summary>-Aufklapper: Standardmarker
+    weg, Zeiger drauf. Genutzt vom mobilen Menü im Header (.burger) und von
+    ui/Ausklapper.astro (.ausklapp-frage).
+  */
+  .ausklapp > summary {
     list-style: none;
     cursor: pointer;
   }
-  .burger > summary::-webkit-details-marker {
+  .ausklapp > summary::-webkit-details-marker {
     display: none;
   }
+
+  /*
+    FAQ-Eintrag. Die ganze Zeile ist Bedienfläche, mindestens 44px hoch.
+    Das Chevron ist das Zustandssignal — die Frage bleibt beim Öffnen --ink,
+    kein Farbwechsel.
+  */
+  .ausklapp-frage > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    min-height: 44px;
+    padding-block: 1.25rem;
+  }
+
+  /*
+    Fokusring nach innen: die Zeilen stoßen über eine 1px-Linie aneinander,
+    ein äußerer Ring würde in die Nachbarzeile schneiden.
+  */
+  .ausklapp-frage > summary:focus-visible {
+    outline-offset: -3px;
+  }
+
+  .ausklapp-frage[open] .ausklapp-chevron {
+    transform: rotate(180deg);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .ausklapp-chevron {
+      transition: transform 150ms ease;
+    }
+  }
+
+  /* Mobiles Menü über <details> — kein JavaScript nötig. */
   .burger[open] .burger-auf {
     display: none;
   }
   .burger:not([open]) .burger-zu {
     display: none;
+  }
+}
+
+/*
+  Im Druck sollen die Antworten sichtbar sein, nicht nur die Fragen.
+  ::details-content ist derzeit nur in Chromium verfügbar; @supports sorgt
+  dafür, dass die Regel dort greift und anderswo einfach nichts tut.
+  Ohne JavaScript — ein Ausdruck mit fünf Fragen und ohne Antworten ist
+  ärgerlich, aber kein Grund für Messcode.
+*/
+@media print {
+  @supports selector(::details-content) {
+    details::details-content {
+      content-visibility: visible;
+    }
   }
 }

@@ -1,0 +1,58 @@
+---
+/*
+  Ein aufklappbarer Eintrag über <details>/<summary>, ohne JavaScript.
+  Gebaut für die FAQ der Leistungsseiten, wiederverwendbar für die späteren
+  Objekttypen-Seiten.
+
+  Bewusst NICHT gesetzt: role="button", tabindex, aria-expanded.
+  <summary> ist nativ ein Bedienelement — der Browser liefert Rolle und
+  Auf-/Zu-Zustand selbst, und manuell gesetzte Attribute überschreiben das
+  mit etwas Schlechterem.
+
+  Bewusst KEIN name-Attribut: damit wäre immer nur ein Eintrag offen. Zwei
+  Antworten ließen sich dann nicht vergleichen, und das Zuklappen eines
+  Eintrags oberhalb des Sichtfelds lässt die Seite springen.
+
+  Der Fragetext ist reiner Text, keine Überschrift. Die Sektion hat ihre
+  eigene h2; eine h3 im <summary> ist erlaubt, wird von Screenreadern aber
+  uneinheitlich vorgelesen.
+
+  Alle Einträge sind standardmäßig zu — auch der erste. Eine geschlossene
+  Liste zeigt den Umfang der Seite auf einen Blick.
+
+  Das Chevron steht in --primary, nicht in --primary-deep: es ist ein
+  grafisches Element wie die Listenpunkte und Icons, kein Text. Für
+  Bedienelemente verlangt WCAG 1.4.11 mindestens 3:1 — --primary erreicht
+  auf Weiß 4,29:1 und liegt damit deutlich darüber. Für Text unter 24px
+  wäre derselbe Ton zu knapp, deshalb bleibt die Frage in --ink.
+*/
+interface Props {
+  frage: string;
+}
+
+const { frage } = Astro.props;
+---
+
+<details class="ausklapp ausklapp-frage">
+  <summary>
+    <span class="text-h3 font-heading font-semibold text-ink">{frage}</span>
+    <svg
+      width="22"
+      height="22"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+      class="ausklapp-chevron shrink-0 text-primary"
+    >
+      <path d="M6 9.5l6 6 6-6"></path>
+    </svg>
+  </summary>
+
+  <div class="max-w-[68ch] pb-6 text-body text-grey">
+    <slot />
+  </div>
+</details>
