@@ -1,0 +1,141 @@
+---
+import CtaAbschluss from '../components/CtaAbschluss.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import KarriereTeaser from '../components/KarriereTeaser.astro';
+import Breadcrumb from '../components/ui/Breadcrumb.astro';
+import { gebietKurz } from '../data/einsatzgebiet';
+import { site } from '../data/site';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+/*
+  Die schwierigste Seite des Projekts, weil sie üblicherweise von Historie
+  lebt — und die gibt es nicht.
+
+  Bewusst NICHT geschrieben: Gründungsgeschichte, „junges dynamisches Team“,
+  Erfahrungsjahre, Mitarbeiterzahlen, Kundenzahlen, Leitbild, Werte-Liste,
+  Zertifikate, Versicherungssummen. Die Seite spricht schlicht nicht über
+  das Alter der Firma.
+
+  Was stattdessen darauf steht: wer die Ansprechperson ist, wie gearbeitet
+  wird, und was ein kleiner Betrieb zusagen kann, was ein großer nicht kann.
+  Das ist die Position — nicht die Neuheit.
+*/
+const title = 'Über uns | S.mile Facility Services';
+const description =
+  'Wer hinter S.mile Facility Services steht, wie wir arbeiten und was ein kleiner Betrieb zusagen kann, was ein großer nicht kann.';
+---
+
+<BaseLayout title={title} description={description}>
+  <Header />
+
+  <main id="inhalt">
+    <Breadcrumb stufen={[{ label: 'Start', href: '/' }, { label: 'Über uns' }]} />
+
+    <div class="wrap pb-12 pt-8 md:pt-10">
+      <h1 class="text-h1 font-heading font-bold text-ink">
+        Ihre Ansprechperson steht selbst im Objekt
+      </h1>
+      <p class="mt-6 max-w-[58ch] text-lead text-grey">
+        S.mile Facility Services betreut Gewerbeimmobilien in {gebietKurz}. Ihre Ansprechperson
+        ist {site.ansprechperson} — nicht ein Kundenbetreuer, der die Objekte nur aus der
+        Akte kennt.
+      </p>
+    </div>
+
+    <section class="sektion border-t border-line">
+      <div class="wrap grid gap-6 lg:grid-cols-12 lg:gap-16">
+        <div class="lg:col-span-4">
+          <h2 class="text-h2 font-heading font-semibold text-ink">Wie wir arbeiten</h2>
+        </div>
+        <div class="lg:col-span-7 lg:col-start-6">
+          <div class="flex max-w-[62ch] flex-col gap-4 text-body text-ink">
+            <p>
+              Jedes Objekt bekommt ein schriftliches Leistungsverzeichnis: welche Position, in
+              welchem Turnus, in welchem Zeitfenster. Das ist die Grundlage für das Angebot und
+              bleibt es im laufenden Betrieb. Änderungen werden nachgetragen, nicht mündlich
+              vereinbart.
+            </p>
+            <p>
+              Jedes Objekt hat eine feste Objektleitung und eine benannte Vertretung. Wechselt
+              das Personal, erfahren Sie es vorher. Das klingt selbstverständlich und ist in
+              dieser Branche der häufigste Grund für einen Dienstleisterwechsel.
+            </p>
+            <p>
+              Reklamationen sind am nächsten Werktag erledigt. Wenn das im Einzelfall nicht
+              geht, erfahren Sie am selben Tag, warum und wann.
+            </p>
+          </div>
+          <p class="mt-7">
+            <a href="/#arbeitsweise" class="textlink text-body">
+              Alle fünf Zusagen im Überblick
+            </a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sektion border-t border-line">
+      <div class="wrap grid gap-6 lg:grid-cols-12 lg:gap-16">
+        <div class="lg:col-span-4">
+          <h2 class="text-h2 font-heading font-semibold text-ink">Warum klein ein Argument ist</h2>
+        </div>
+        <div class="lg:col-span-7 lg:col-start-6">
+          <p class="max-w-[62ch] text-lead text-grey">
+            Vier Zusagen, die ein Anbieter mit zweihundert Objekten so nicht geben kann.
+          </p>
+          <ul class="mt-7 flex flex-col gap-4">
+            {
+              [
+                'Die Begehung und das schriftliche Leistungsverzeichnis sind kostenlos — unabhängig davon, ob Sie beauftragen.',
+                'Probereinigung oder erster Monat zum Test. Danach entscheiden Sie.',
+                'Kurze Kündigungsfristen im ersten Vertragsjahr: [TODO: Frist]',
+                `${site.ansprechperson} ist Ihre Ansprechperson und bei der Einarbeitung im Objekt dabei.`,
+              ].map((punkt) => (
+                <li class="flex gap-3 text-body text-ink">
+                  <span
+                    class="mt-[0.6em] size-2 shrink-0 rounded-full bg-primary"
+                    aria-hidden="true"
+                  />
+                  <span class="max-w-[62ch]">{punkt}</span>
+                </li>
+              ))
+            }
+          </ul>
+          <p class="mt-7 max-w-[62ch] text-body text-grey">
+            Wer mit Zahlen argumentieren will, findet hier keine. Was hier steht, lässt sich
+            dafür an jedem einzelnen Objekt überprüfen — und einfordern.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sektion border-t border-line">
+      <div class="wrap grid gap-6 lg:grid-cols-12 lg:gap-16">
+        <div class="lg:col-span-4">
+          <h2 class="text-h2 font-heading font-semibold text-ink">Sprachgebrauch</h2>
+        </div>
+        <div class="lg:col-span-7 lg:col-start-6">
+          <p class="max-w-[62ch] text-body text-grey">
+            Auf dieser Website ist von Reinigungskräften, Reinigungsleistungen und
+            Gebäudereinigung als Tätigkeit die Rede. „Gebäudereiniger“ ist ein staatlich
+            anerkannter Ausbildungsberuf und als Berufsbezeichnung geschützt — wir verwenden
+            ihn nicht für Personen ohne diese Ausbildung. Ebenso finden Sie hier keine Angaben
+            zu Zertifikaten, Normen oder Versicherungssummen, solange die Nachweise nicht
+            vorliegen.
+          </p>
+          <p class="mt-4 max-w-[62ch] text-body text-grey">
+            Das ist keine Bescheidenheit, sondern eine Arbeitsweise: was auf der Seite steht,
+            soll im Objekt auch gelten.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <KarriereTeaser />
+
+    <CtaAbschluss />
+  </main>
+
+  <Footer />
+</BaseLayout>

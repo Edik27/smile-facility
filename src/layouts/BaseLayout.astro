@@ -49,6 +49,20 @@ const jsonLd = {
   },
   /* Stuttgart steht zuerst — die Reihenfolge signalisiert den Schwerpunkt. */
   areaServed: regionen.map((region) => ({ '@type': region.typ, name: region.name })),
+
+  /*
+    Erreichbarkeit maschinenlesbar. Vorher weggelassen, weil die Wochentage
+    fehlten — eine Angabe ohne dayOfWeek wäre nicht unvollständig, sondern
+    falsch gewesen.
+  */
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: site.oeffnungszeiten.tage,
+      opens: site.oeffnungszeiten.von,
+      closes: site.oeffnungszeiten.bis,
+    },
+  ],
   image: ogUrl,
   logo: new URL('/logo.png', Astro.site).href,
   knowsLanguage: 'de-DE',
@@ -67,7 +81,11 @@ const jsonLd = {
 ---
 
 <!doctype html>
-<html lang="de">
+<!--
+  `kein-js` wird vom Kopfmenü-Skript entfernt. Bleibt die Klasse stehen,
+  greifen die CSS-Rückfälle in global.css.
+-->
+<html lang="de" class="kein-js">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />

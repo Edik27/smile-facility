@@ -1,0 +1,116 @@
+---
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import Breadcrumb from '../components/ui/Breadcrumb.astro';
+import { site } from '../data/site';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+/*
+  Pflichtangaben nach § 5 DDG (seit Mai 2024 Nachfolger von § 5 TMG).
+
+  Rechtsform: Einzelunternehmen, vom Kunden bestätigt. Daraus folgt der
+  Aufbau dieser Seite:
+  - Anbieter ist die natürliche Person, nicht die Geschäftsbezeichnung.
+    „S.mile Facility Services“ steht daneben, nicht anstelle des Namens.
+  - Kein Handelsregistereintrag, kein Vertretungsberechtigter, keine
+    Angabe nach § 5 Abs. 1 Nr. 4 DDG.
+
+  Zur Steuernummer, und das korrigiert eine frühere Annahme auf dieser
+  Seite: § 5 Abs. 1 Nr. 6 DDG verlangt die Umsatzsteuer-Identifikations-
+  nummer nach § 27a UStG oder die Wirtschafts-Identifikationsnummer nach
+  § 139c AO — und das ausdrücklich nur „sofern vorhanden“. Die gewöhnliche
+  Steuernummer des Finanzamts ist KEINE Impressumspflichtangabe; sie ist
+  ein personenbezogenes Steuermerkmal und sollte nicht veröffentlicht
+  werden. Bei Kleinunternehmerregelung nach § 19 UStG gibt es meist keine
+  USt-IdNr., und dann entfällt die Angabe vollständig.
+
+  Deshalb heißt das Feld jetzt „Umsatzsteuer-Identifikationsnummer“ und der
+  Marker fragt, ob eine existiert — statt eine Nummer einzufordern, die
+  nicht hierher gehört. Die Seite ist damit nicht mehr blockiert.
+
+  Bewusst nicht aufgenommen: Berufsaufsichtsbehörde, Kammer,
+  Berufsbezeichnung und Versicherungsangaben. Nichts davon ist belegt, und
+  für Gebäudereinigung ist keines davon zwingend.
+*/
+const title = 'Impressum | S.mile Facility Services';
+const description = 'Anbieterkennzeichnung nach § 5 DDG für S.mile Facility Services, Spraitbach.';
+---
+
+<BaseLayout title={title} description={description}>
+  <Header />
+
+  <main id="inhalt">
+    <Breadcrumb stufen={[{ label: 'Start', href: '/' }, { label: 'Impressum' }]} />
+
+    <div class="wrap pb-12 pt-8 md:pt-10">
+      <h1 class="text-h1 font-heading font-bold text-ink">Impressum</h1>
+      <p class="mt-6 max-w-[62ch] text-body text-grey">
+        Angaben gemäß § 5 Digitale-Dienste-Gesetz (DDG).
+      </p>
+      <p class="mt-6 max-w-[62ch] rounded-img border border-line p-5 text-body text-ink">
+        [TODO Kunde: Zu klären ist nur noch, ob eine Umsatzsteuer-Identifikationsnummer
+        vorliegt. Falls ja, wird sie unten eingetragen. Falls nicht — etwa bei
+        Kleinunternehmerregelung nach § 19 UStG — entfällt die Zeile ersatzlos. Die
+        gewöhnliche Steuernummer des Finanzamts gehört nicht ins Impressum.]
+      </p>
+    </div>
+
+    <section class="sektion border-t border-line">
+      <div class="wrap">
+        <dl class="max-w-[62ch] border-t border-line">
+          {
+            [
+              ['Anbieter', [site.ansprechperson]],
+              ['Rechtsform', [site.rechtsform]],
+              ['Geschäftsbezeichnung', [site.firmierung]],
+              ['Anschrift', [site.strasse, `${site.plz} ${site.ort}`]],
+              ['Telefon', [site.telefon]],
+              ['E-Mail', [site.email]],
+              ['Erreichbarkeit', [site.bueroZeiten]],
+              [
+                'Umsatzsteuer-Identifikationsnummer',
+                [
+                  site.ustId,
+                  'Anzugeben nach § 5 Abs. 1 Nr. 6 DDG nur, sofern vorhanden. Bei Kleinunternehmerregelung nach § 19 UStG besteht in der Regel keine.',
+                ],
+              ],
+              [
+                'Verantwortlich für den Inhalt',
+                [site.ansprechperson, `${site.strasse}, ${site.plz} ${site.ort}`],
+              ],
+            ].map(([bezeichnung, zeilen]) => (
+              <div class="grid gap-x-8 gap-y-1 border-b border-line py-5 md:grid-cols-12">
+                <dt class="text-small text-grey md:col-span-4">{bezeichnung}</dt>
+                <dd class="flex flex-col gap-1 text-body text-ink md:col-span-8">
+                  {(zeilen as string[]).map((zeile) => (
+                    <span>{zeile}</span>
+                  ))}
+                </dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <div class="mt-14 max-w-[62ch]">
+          <h2 class="text-h3 font-heading font-semibold text-ink">Streitbeilegung</h2>
+          <p class="mt-3 text-body text-grey">
+            Wir sind nicht verpflichtet und nicht bereit, an einem Streitbeilegungsverfahren vor
+            einer Verbraucherschlichtungsstelle teilzunehmen. Unsere Leistungen richten sich an
+            Unternehmen, Verwaltungen und Betreiber gewerblicher Objekte, nicht an Verbraucher.
+          </p>
+        </div>
+
+        <div class="mt-10 max-w-[62ch]">
+          <h2 class="text-h3 font-heading font-semibold text-ink">Haftung für Links</h2>
+          <p class="mt-3 text-body text-grey">
+            Diese Website enthält keine Links auf fremde Websites. Sollten künftig Verweise
+            aufgenommen werden, übernehmen wir für deren Inhalte keine Verantwortung; dafür ist
+            der jeweilige Anbieter verantwortlich.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>

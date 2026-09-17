@@ -1,0 +1,84 @@
+---
+import CtaAbschluss from '../components/CtaAbschluss.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import Breadcrumb from '../components/ui/Breadcrumb.astro';
+import { routes, site } from '../data/site';
+import { gebietKurz } from '../data/einsatzgebiet';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+/*
+  Kurz und funktional. Kein zweites Formular — dafür gibt es /anfrage;
+  zwei Formulare auf einer Website konkurrieren nur miteinander.
+*/
+const title = 'Kontakt | S.mile Facility Services';
+const description =
+  'Anschrift, E-Mail und Erreichbarkeit von S.mile Facility Services in Spraitbach. Rückruf innerhalb eines Werktags auf jede Anfrage.';
+---
+
+<BaseLayout title={title} description={description}>
+  <Header />
+
+  <main id="inhalt">
+    <Breadcrumb stufen={[{ label: 'Start', href: '/' }, { label: 'Kontakt' }]} />
+
+    <div class="wrap pb-12 pt-8 md:pt-10">
+      <h1 class="text-h1 font-heading font-bold text-ink">Kontakt</h1>
+      <p class="mt-6 max-w-[58ch] text-lead text-grey">
+        Auf jede Anfrage folgt ein Rückruf innerhalb eines Werktags — auch auf die, aus der
+        am Ende kein Auftrag wird.
+      </p>
+    </div>
+
+    <section class="sektion border-t border-line">
+      <div class="wrap grid gap-10 lg:grid-cols-12 lg:gap-16">
+        <div class="lg:col-span-5">
+          <h2 class="text-h3 font-heading font-semibold text-ink">Anschrift</h2>
+          <address class="mt-4 flex flex-col gap-1 text-body not-italic text-ink">
+            <span>{site.firmierung}</span>
+            <span>{site.ansprechperson}</span>
+            <span class="mt-2">{site.strasse}</span>
+            <span>{site.plz} {site.ort}</span>
+          </address>
+        </div>
+
+        <div class="lg:col-span-6 lg:col-start-7">
+          <h2 class="text-h3 font-heading font-semibold text-ink">Erreichbarkeit</h2>
+          <dl class="mt-4 flex flex-col gap-5">
+            <div>
+              <dt class="text-small text-grey">Telefon</dt>
+              <dd class="text-body font-heading font-semibold text-ink">{site.telefon}</dd>
+            </div>
+            <div>
+              <dt class="text-small text-grey">E-Mail</dt>
+              <dd class="text-body">
+                <a href={`mailto:${site.email}`} class="textlink">{site.email}</a>
+              </dd>
+            </div>
+            <div>
+              <dt class="text-small text-grey">Bürozeiten</dt>
+              <dd class="text-body text-ink">{site.bueroZeiten}</dd>
+            </div>
+            <div>
+              <dt class="text-small text-grey">Einsatzgebiet</dt>
+              <dd class="text-body text-ink">
+                {gebietKurz} — <a href="/#einsatzgebiet" class="textlink">Details</a>
+              </dd>
+            </div>
+          </dl>
+
+          <p class="mt-8 max-w-[58ch] text-body text-grey">
+            Für ein Angebot brauchen wir Objektart, Fläche, Leistungen und Turnus. Am
+            schnellsten geht das über das{' '}
+            <a href={routes.anfrage} class="textlink">Anfrageformular</a> — dort sind die vier
+            Angaben schon vorgegeben.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <CtaAbschluss />
+  </main>
+
+  <Footer />
+</BaseLayout>

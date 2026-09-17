@@ -1,0 +1,314 @@
+---
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import Button from '../components/ui/Button.astro';
+import Breadcrumb from '../components/ui/Breadcrumb.astro';
+import { kacheln as leistungsKacheln } from '../data/leistungen';
+import { objekttypSeiten } from '../data/objekttypen';
+import { ANFRAGE_ENDPUNKT, site } from '../data/site';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+/*
+  Die Seite, auf die alles zeigt. Ziel ist eine qualifizierte Anfrage:
+  Objektart, Fläche, Leistungen, Turnus — genau die vier Angaben, mit denen
+  ein Angebot ohne Rückfragen kalkuliert werden kann.
+
+  Zum Versand: eine statische Seite kann ein Formular nicht verarbeiten.
+  Solange ANFRAGE_ENDPUNKT leer ist, geht das Formular per `mailto:` an die
+  Kontaktadresse und öffnet das Mailprogramm des Absenders. Das funktioniert
+  bei installierten Mailclients, bei reinen Webmail-Nutzern nicht — deshalb
+  stehen E-Mail und Telefon zusätzlich als eigenständiger Weg daneben und
+  nicht als Kleingedrucktes.
+
+  Sobald ein Endpunkt eingetragen ist, schaltet das Formular auf POST um,
+  ohne Änderung im Markup.
+
+  Die Vorauswahl aus ?leistung= und ?objekt= setzt ein kleines Skript am
+  Seitenende. Ohne JavaScript bleibt die Auswahl auf „Bitte auswählen“ —
+  der Parameter ist dann kein Verlust, nur keine Erleichterung.
+*/
+const perMail = ANFRAGE_ENDPUNKT === '';
+
+const title = 'Angebot anfordern | S.mile Facility Services';
+const description =
+  'Objektart, Fläche, Leistungen und Turnus angeben — wir melden uns innerhalb eines Werktags. Begehung und Leistungsverzeichnis sind kostenlos.';
+
+const feldKlassen =
+  'mt-2 w-full rounded-btn border border-line bg-surface px-4 py-3 text-body text-ink';
+const labelKlassen = 'block text-small font-heading font-semibold text-ink';
+---
+
+<BaseLayout title={title} description={description}>
+  <Header />
+
+  <main id="inhalt">
+    <Breadcrumb stufen={[{ label: 'Start', href: '/' }, { label: 'Angebot anfordern' }]} />
+
+    <div class="wrap pb-12 pt-8 md:pt-10">
+      <h1 class="text-h1 font-heading font-bold text-ink">Angebot anfordern</h1>
+      <p class="mt-6 max-w-[58ch] text-lead text-grey">
+        Vier Angaben genügen für ein belastbares Angebot: Objektart, Fläche, gewünschte
+        Leistungen und Turnus. Wir melden uns innerhalb eines Werktags und vereinbaren die
+        Begehung — die ist kostenlos, unabhängig davon, ob Sie beauftragen.
+      </p>
+    </div>
+
+    <section class="sektion border-t border-line pt-12 md:pt-16">
+      <div class="wrap grid gap-12 lg:grid-cols-12 lg:gap-16">
+        <div class="lg:col-span-7">
+          <form
+            method="post"
+            action={perMail ? `mailto:${site.email}` : ANFRAGE_ENDPUNKT}
+            enctype={perMail ? 'text/plain' : undefined}
+            class="flex flex-col gap-7"
+          >
+            <fieldset class="flex flex-col gap-5 border-0 p-0">
+              <legend class="mb-1 text-h3 font-heading font-semibold text-ink">Zum Objekt</legend>
+
+              <div>
+                <label for="objekt" class={labelKlassen}>Um welches Objekt geht es?</label>
+                <select id="objekt" name="Objektart" required class={feldKlassen}>
+                  <option value="">Bitte auswählen</option>
+                  {
+                    objekttypSeiten.map((o) => (
+                      <option value={o.slug} data-slug={o.slug}>
+                        {o.titel}
+                      </option>
+                    ))
+                  }
+                  <option value="mehrere-objekte">Mehrere Objekte</option>
+                  <option value="sonstiges">Etwas anderes</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="flaeche" class={labelKlassen}>
+                  Fläche in Quadratmetern <span class="font-normal text-grey">(Schätzung genügt)</span>
+                </label>
+                <input
+                  id="flaeche"
+                  name="Flaeche"
+                  type="text"
+                  inputmode="numeric"
+                  autocomplete="off"
+                  placeholder="z. B. 450"
+                  class={feldKlassen}
+                />
+              </div>
+
+              <div>
+                <label for="ort" class={labelKlassen}>Ort des Objekts</label>
+                <input
+                  id="ort"
+                  name="Ort"
+                  type="text"
+                  autocomplete="address-level2"
+                  placeholder="z. B. Stuttgart-Vaihingen"
+                  class={feldKlassen}
+                />
+              </div>
+            </fieldset>
+
+            <fieldset class="flex flex-col gap-4 border-0 p-0">
+              <legend class="mb-1 text-h3 font-heading font-semibold text-ink">
+                Welche Leistungen kommen in Frage?
+              </legend>
+              <p class="text-small text-grey">Mehrfachauswahl möglich.</p>
+
+              <ul class="flex flex-col gap-1">
+                {
+                  leistungsKacheln.map((k) => (
+                    <li>
+                      <label
+                        class="flex min-h-[44px] cursor-pointer items-center gap-3 rounded-btn py-1 text-body text-ink"
+                      >
+                        <input
+                          type="checkbox"
+                          name="Leistung"
+                          value={k.titel}
+                          data-slug={k.slug}
+                          class="size-5 shrink-0 accent-[var(--primary-deep)]"
+                        />
+                        {k.titel}
+                      </label>
+                    </li>
+                  ))
+                }
+              </ul>
+
+              <div class="mt-2">
+                <label for="turnus" class={labelKlassen}>Gewünschter Turnus</label>
+                <select id="turnus" name="Turnus" class={feldKlassen}>
+                  <option value="">Noch unklar</option>
+                  <option>Täglich</option>
+                  <option>Zwei bis drei Mal pro Woche</option>
+                  <option>Wöchentlich</option>
+                  <option>Zweiwöchentlich bis monatlich</option>
+                  <option>Einmalig</option>
+                  <option>Saisonal (Winterdienst)</option>
+                </select>
+              </div>
+            </fieldset>
+
+            <fieldset class="flex flex-col gap-5 border-0 p-0">
+              <legend class="mb-1 text-h3 font-heading font-semibold text-ink">Ihr Kontakt</legend>
+
+              <div>
+                <label for="firma" class={labelKlassen}>Firma oder Verwaltung</label>
+                <input
+                  id="firma"
+                  name="Firma"
+                  type="text"
+                  autocomplete="organization"
+                  class={feldKlassen}
+                />
+              </div>
+
+              <div>
+                <label for="name" class={labelKlassen}>Name</label>
+                <input
+                  id="name"
+                  name="Name"
+                  type="text"
+                  required
+                  autocomplete="name"
+                  class={feldKlassen}
+                />
+              </div>
+
+              <div>
+                <label for="email" class={labelKlassen}>E-Mail</label>
+                <input
+                  id="email"
+                  name="EMail"
+                  type="email"
+                  required
+                  autocomplete="email"
+                  class={feldKlassen}
+                />
+              </div>
+
+              <div>
+                <label for="telefon" class={labelKlassen}>
+                  Telefon <span class="font-normal text-grey">(falls ein Rückruf lieber ist)</span>
+                </label>
+                <input
+                  id="telefon"
+                  name="Telefon"
+                  type="tel"
+                  autocomplete="tel"
+                  class={feldKlassen}
+                />
+              </div>
+
+              <div>
+                <label for="nachricht" class={labelKlassen}>
+                  Was wir noch wissen sollten
+                </label>
+                <textarea
+                  id="nachricht"
+                  name="Nachricht"
+                  rows="5"
+                  class={feldKlassen}
+                  placeholder="Zutrittsregelung, Zeitfenster, bisheriger Dienstleister, Termin für die Begehung …"
+                ></textarea>
+              </div>
+            </fieldset>
+
+            <div>
+              <Button type="submit" class="w-full sm:w-auto">Anfrage senden</Button>
+              {
+                perMail && (
+                  <p class="mt-4 max-w-[58ch] text-small text-grey">
+                    [TODO Kunde: Es ist noch kein Formularziel eingerichtet. Bis dahin öffnet
+                    „Anfrage senden“ Ihr Mailprogramm mit den ausgefüllten Angaben. Wer kein
+                    Mailprogramm eingerichtet hat, nutzt bitte die Adresse rechts.]
+                  </p>
+                )
+              }
+            </div>
+          </form>
+        </div>
+
+        <aside class="lg:col-span-4 lg:col-start-9">
+          <div class="rounded-img border border-line p-7">
+            <h2 class="text-h3 font-heading font-semibold text-ink">Lieber direkt</h2>
+            <p class="mt-3 text-body text-grey">
+              Ein Teil unserer Auftraggeber ruft lieber an, als ein Formular auszufüllen. Beides
+              führt zum selben Ergebnis.
+            </p>
+
+            <dl class="mt-6 flex flex-col gap-4 text-body">
+              <div>
+                <dt class="text-small text-grey">Telefon</dt>
+                <dd class="font-heading font-semibold text-ink">{site.telefon}</dd>
+              </div>
+              <div>
+                <dt class="text-small text-grey">E-Mail</dt>
+                <dd>
+                  <a href={`mailto:${site.email}`} class="textlink">{site.email}</a>
+                </dd>
+              </div>
+              <div>
+                <dt class="text-small text-grey">Erreichbar</dt>
+                <dd class="text-ink">{site.bueroZeiten}</dd>
+              </div>
+            </dl>
+          </div>
+
+          <div class="mt-8">
+            <h2 class="text-h3 font-heading font-semibold text-ink">Was danach passiert</h2>
+            <ol class="mt-4 flex flex-col gap-3">
+              {
+                [
+                  'Rückruf innerhalb eines Werktags.',
+                  'Objektbegehung zum vereinbarten Termin, kostenlos.',
+                  'Schriftliches Leistungsverzeichnis mit Preis.',
+                ].map((schritt) => (
+                  <li class="flex gap-3 text-body text-ink">
+                    <span
+                      class="mt-[0.6em] size-2 shrink-0 rounded-full bg-primary"
+                      aria-hidden="true"
+                    />
+                    <span>{schritt}</span>
+                  </li>
+                ))
+              }
+            </ol>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<script is:inline>
+  /*
+    Vorauswahl aus ?leistung= und ?objekt=. Die Parameter setzen Hero,
+    Leistungs- und Objekttyp-Seiten. Ohne dieses Skript bliebe die Auswahl
+    leer — der Parameter wäre dann wirkungslos, weil eine statische Seite
+    die Query nicht beim Bauen kennt.
+  */
+  (function () {
+    var query = new URLSearchParams(window.location.search);
+
+    var objekt = query.get('objekt');
+    if (objekt) {
+      var auswahl = document.getElementById('objekt');
+      var treffer = auswahl
+        ? auswahl.querySelector('option[value="' + CSS.escape(objekt) + '"]')
+        : null;
+      if (treffer) auswahl.value = objekt;
+    }
+
+    var leistung = query.get('leistung');
+    if (leistung) {
+      var kaestchen = document.querySelector(
+        'input[name="Leistung"][data-slug="' + CSS.escape(leistung) + '"]',
+      );
+      if (kaestchen) kaestchen.checked = true;
+    }
+  })();
+</script>

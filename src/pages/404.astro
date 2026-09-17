@@ -9,9 +9,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   Schlicht gehalten: eine 404 ist kein Ort für Gestaltung, sondern für zwei
   brauchbare Links. Kein Pink-Block — der bleibt dem Abschluss-CTA vorbehalten.
 
-  TODO: Der zweite Link zeigt auf den Leistungsabschnitt der Startseite,
-  solange /leistungen nicht existiert. Bei Fertigstellung des Hubs auf
-  routes.leistungen umstellen.
+  Neben dem Anfrageformular steht die E-Mail-Adresse, nicht nur der Link:
+  wer schon auf einer 404 gelandet ist, hat einen Weg verdient, der
+  unabhängig von unseren Routen funktioniert.
 */
 const title = `Seite nicht gefunden | ${site.name}`;
 const description =
@@ -32,7 +32,7 @@ const description =
 
       <div class="mt-9 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
         <Button href="/">Zur Startseite</Button>
-        <a href="/#leistungen" class="textlink text-body">Leistungen ansehen</a>
+        <a href={routes.leistungen} class="textlink text-body">Leistungen ansehen</a>
       </div>
 
       <p class="mt-12 max-w-[54ch] text-body text-grey">
