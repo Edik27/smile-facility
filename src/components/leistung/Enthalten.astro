@@ -3,26 +3,31 @@ import type { Positionsgruppe } from '../../data/leistungen';
 import SectionHeading from '../ui/SectionHeading.astro';
 
 /*
-  Der Kern der Seite: Positionen, wie sie in einem Leistungsverzeichnis
-  stünden. Kein Kachelraster — Gruppenname links, Positionen rechts, 1px
-  Trennlinie zwischen den Gruppen.
+  Gruppierte Positionsliste: Gruppenname links, Positionen rechts, 1px
+  Trennlinie dazwischen. Kein Kachelraster.
 
   Die einzige graue Fläche der Seite. Damit liegt das Gewicht dort, wo die
   Frage beantwortet wird, und der Rest der Seite bleibt weiß.
+
+  Wird von zwei Seitentypen genutzt — auf Leistungsseiten als „Was enthalten
+  ist“ (Leistungsverzeichnis), auf Objekttyp-Seiten als „Worauf es hier
+  ankommt“ (Prüfpunkte). Deshalb ist der Titel eine Prop.
 */
 interface Props {
+  /* Standard passt für Leistungsseiten; Objekttyp-Seiten setzen eigene Titel. */
+  titel?: string;
   lead: string;
   gruppen: Positionsgruppe[];
   turnusabhaengig?: Positionsgruppe;
 }
 
-const { lead, gruppen, turnusabhaengig } = Astro.props;
+const { titel = 'Was enthalten ist', lead, gruppen, turnusabhaengig } = Astro.props;
 const alle = turnusabhaengig ? [...gruppen, turnusabhaengig] : gruppen;
 ---
 
 <section id="enthalten" class="sektion bg-surface-alt">
   <div class="wrap">
-    <SectionHeading titel="Was enthalten ist" lead={lead} />
+    <SectionHeading titel={titel} lead={lead} />
 
     <dl class="mt-12 border-t border-line">
       {

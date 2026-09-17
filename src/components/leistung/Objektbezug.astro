@@ -22,9 +22,9 @@ interface Props {
 const { lead, slugs } = Astro.props;
 
 const typen = slugs
-  .map((slug) => objekttypen.find((t) => t.href.endsWith(`/${slug}`)))
+  .map((slug) => objekttypen.find((t) => t.slug === slug))
   .filter((t): t is NonNullable<typeof t> => Boolean(t))
-  .map((t) => ({ titel: t.titel, href: objekttypHref(t.href.split('/').pop()!) }));
+  .map((t) => ({ titel: t.titel, href: objekttypHref(t.slug) }));
 ---
 
 <section class="sektion border-t border-line">

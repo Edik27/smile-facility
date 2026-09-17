@@ -1,0 +1,79 @@
+---
+import CtaAbschluss from '../../components/CtaAbschluss.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+import Enthalten from '../../components/leistung/Enthalten.astro';
+import Faq from '../../components/leistung/Faq.astro';
+import Turnus from '../../components/leistung/Turnus.astro';
+import Leistungsbezug from '../../components/objekttyp/Leistungsbezug.astro';
+import WeitereObjekttypen from '../../components/objekttyp/WeitereObjekttypen.astro';
+import Breadcrumb from '../../components/ui/Breadcrumb.astro';
+import { objekttypSeiten } from '../../data/objekttypen';
+import { objekttypenHubHref, routes } from '../../data/site';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+/*
+  Eine Route für alle Objekttyp-Seiten, gespeist aus `objekttypSeiten`.
+
+  Vier der sechs Abschnitte sind dieselben Komponenten wie auf den
+  Leistungsseiten — Enthalten mit dem Titel „Worauf es hier ankommt“,
+  Turnus als „Zeitfenster und Zutritt“, Faq und CtaAbschluss. Genau dafür
+  waren die Titel als Props angelegt.
+*/
+export function getStaticPaths() {
+  return objekttypSeiten.map((objekttyp) => ({
+    params: { slug: objekttyp.slug },
+    props: { objekttyp },
+  }));
+}
+
+const { objekttyp } = Astro.props;
+
+/* Objektart wird als Parameter durchgereicht — wie ?objekt= aus dem Hero. */
+const anfrageHref = `${routes.anfrage}?objekt=${objekttyp.slug}`;
+---
+
+<BaseLayout title={objekttyp.meta.title} description={objekttyp.meta.description}>
+  <Header />
+
+  <main id="inhalt">
+    <Breadcrumb
+      stufen={[
+        { label: 'Start', href: '/' },
+        { label: 'Objekttypen', href: objekttypenHubHref() },
+        { label: objekttyp.titel },
+      ]}
+    />
+
+    <div class="wrap pb-16 pt-8 md:pb-20 md:pt-10">
+      <h1 class="text-h1 font-heading font-bold text-ink">{objekttyp.titel}</h1>
+      <p class="mt-6 max-w-[58ch] text-lead text-grey">{objekttyp.lead}</p>
+    </div>
+
+    <Enthalten
+      titel="Worauf es hier ankommt"
+      lead={objekttyp.ankommt.lead}
+      gruppen={objekttyp.ankommt.gruppen}
+    />
+
+    <Turnus
+      titel="Zeitfenster und Zutritt"
+      lead={objekttyp.zugang.lead}
+      stufen={objekttyp.zugang.stufen}
+      zeitfenster={objekttyp.zugang.hinweise}
+    />
+
+    <Leistungsbezug lead={objekttyp.leistungen.lead} slugs={objekttyp.leistungen.slugs} />
+
+    <Faq eintraege={objekttyp.faq} />
+
+    <WeitereObjekttypen slug={objekttyp.slug} />
+
+    <CtaAbschluss
+      titel={`${objekttyp.titel}: Angebot mit kostenloser Begehung und Leistungsverzeichnis.`}
+      href={anfrageHref}
+    />
+  </main>
+
+  <Footer />
+</BaseLayout>

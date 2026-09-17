@@ -20,9 +20,9 @@ export const unterhaltsreinigung: LeistungInhalt = {
   slug: 'unterhaltsreinigung',
 
   meta: {
-    /* 53 Zeichen */
+    /* 41 Zeichen */
     title: 'Unterhaltsreinigung in Stuttgart | S.mile',
-    /* 149 Zeichen */
+    /* 146 Zeichen */
     description:
       'Laufende Reinigung von Büro-, Handels- und Logistikflächen in Stuttgart. Feste Turnusse, schriftliches Leistungsverzeichnis, feste Ansprechperson.',
   },

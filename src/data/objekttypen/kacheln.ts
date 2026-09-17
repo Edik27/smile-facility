@@ -1,6 +1,17 @@
-import { routes } from './site';
+import { objekttypHref } from '../site';
 
+/*
+  Identität der Objektarten: Titel, Beschreibungssatz, Bild, Linktexte.
+  Getrennt von den Inhaltsdateien im selben Verzeichnis — gleiche Aufteilung
+  wie bei src/data/leistungen/. Die Startseite braucht alle Einträge.
+*/
 export interface Objekttyp {
+  /*
+    Slug als eigenes Feld. Vorher wurde er in Objektbezug.astro aus dem href
+    zurückgerechnet (`href.split('/').pop()`) — das bricht, sobald der href
+    über die Weiche auf einen Anker zeigt.
+  */
+  slug: string;
   titel: string;
   beschreibung: string;
   href: string;
@@ -29,7 +40,7 @@ export const verwaltungen = {
     'Objektaufnahme und Übernahme ohne Parallelbetrieb zum bisherigen Dienstleister',
     'Meldungen aus der Mieterschaft laufen über eine Nummer, nicht über eine Zentrale',
   ],
-  href: `${routes.objekttypen}/immobilienverwaltungen`,
+  href: objekttypHref('immobilienverwaltungen'),
   linkText: 'Leistungen für Immobilienverwaltungen',
 };
 
@@ -38,7 +49,8 @@ export const objekttypen: Objekttyp[] = [
     titel: 'Büro- und Verwaltungsgebäude',
     beschreibung:
       'Reinigung vor oder nach den Bürozeiten, Sanitär- und Teeküchenkontrolle im vereinbarten Rhythmus, Zutritt nach Ihrer Schließordnung.',
-    href: `${routes.objekttypen}/buero`,
+    slug: 'buero',
+    href: objekttypHref('buero'),
     bild: 'buero',
     alt: 'Sitzbereich in einem Bürogebäude mit Glastrennwänden und Flur',
     linkText: 'Mehr zu Büro- und Verwaltungsgebäuden',
@@ -47,7 +59,8 @@ export const objekttypen: Objekttyp[] = [
     titel: 'Handel',
     beschreibung:
       'Verkaufsflächen sind zur Öffnung fertig. Eingangsbereich und Kassenzone kontrollieren wir auf Wunsch auch während der Öffnungszeiten.',
-    href: `${routes.objekttypen}/handel`,
+    slug: 'handel',
+    href: objekttypHref('handel'),
     bild: 'handel',
     alt: 'Verkaufsfläche mit Kleiderstangen und beleuchteter Warenwand',
     linkText: 'Mehr zum Handel',
@@ -56,7 +69,8 @@ export const objekttypen: Objekttyp[] = [
     titel: 'Industrie und Logistik',
     beschreibung:
       'Hallenböden, Verkehrswege und Sozialräume im Schichtbetrieb, abgestimmt auf Ihre Produktions- und Umschlagzeiten.',
-    href: `${routes.objekttypen}/industrie-logistik`,
+    slug: 'industrie-logistik',
+    href: objekttypHref('industrie-logistik'),
     bild: 'industrie-logistik',
     alt: 'Regalgasse einer Logistikhalle mit markiertem Verkehrsweg',
     linkText: 'Mehr zu Industrie und Logistik',
@@ -65,7 +79,8 @@ export const objekttypen: Objekttyp[] = [
     titel: 'Arztpraxen und medizinische Einrichtungen',
     beschreibung:
       'Getrennte Reinigungspläne für Behandlungs-, Warte- und Sanitärbereiche. Das Personal wird auf Ihren Hygieneplan eingewiesen.',
-    href: `${routes.objekttypen}/medizin`,
+    slug: 'medizin',
+    href: objekttypHref('medizin'),
     bild: 'medizin',
     alt: 'Behandlungsstuhl in einer Zahnarztpraxis',
     linkText: 'Mehr zu Arztpraxen und medizinischen Einrichtungen',
@@ -74,7 +89,8 @@ export const objekttypen: Objekttyp[] = [
     titel: 'Hotellerie und Gastronomie',
     beschreibung:
       'Öffentliche Bereiche, Sanitäranlagen und Küchenumfeld vor Betriebsbeginn, mit benannter Vertretung für Wochenenden und Feiertage.',
-    href: `${routes.objekttypen}/hotellerie-gastronomie`,
+    slug: 'hotellerie-gastronomie',
+    href: objekttypHref('hotellerie-gastronomie'),
     bild: 'hotellerie-gastronomie',
     alt: 'Gastraum mit Fensterfront und eingedeckten Tischen',
     linkText: 'Mehr zu Hotellerie und Gastronomie',

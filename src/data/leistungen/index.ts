@@ -1,6 +1,11 @@
 import { routes } from '../site';
 import { kacheln } from './kacheln';
 import type { Leistung, LeistungInhalt } from './typen';
+import { aussenanlagenWinterdienst } from './aussenanlagen-winterdienst';
+import { bauendreinigung } from './bauendreinigung';
+import { glasreinigung } from './glasreinigung';
+import { grundreinigung } from './grundreinigung';
+import { hausmeisterservice } from './hausmeisterservice';
 import { unterhaltsreinigung } from './unterhaltsreinigung';
 
 export type {
@@ -20,11 +25,18 @@ export { kacheln } from './kacheln';
 */
 
 /*
-  Inhalte der fertigen Unterseiten. Hier eintragen, sobald eine Leistung
-  ausgeschrieben ist — `getStaticPaths` in src/pages/leistungen/[slug].astro
-  erzeugt genau für diese Einträge eine Seite.
+  Inhalte der Unterseiten. Reihenfolge wie in kacheln.ts.
+  `getStaticPaths` in src/pages/leistungen/[slug].astro erzeugt genau für
+  diese Einträge eine Seite — eine Leistung ohne Inhaltsdatei bekommt keine.
 */
-const inhalte: LeistungInhalt[] = [unterhaltsreinigung];
+const inhalte: LeistungInhalt[] = [
+  unterhaltsreinigung,
+  glasreinigung,
+  grundreinigung,
+  bauendreinigung,
+  aussenanlagenWinterdienst,
+  hausmeisterservice,
+];
 
 /* Kachel + Inhalt über den Slug zusammenführen. */
 export const leistungsSeiten: Leistung[] = inhalte.map((inhalt) => {

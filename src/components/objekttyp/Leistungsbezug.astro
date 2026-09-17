@@ -1,0 +1,48 @@
+---
+import { kacheln } from '../../data/leistungen';
+import { routes } from '../../data/site';
+import SectionHeading from '../ui/SectionHeading.astro';
+
+/*
+  Welche Leistungen in dieser Objektart typisch sind. Verlinkt auf die
+  Leistungsseiten — das ist der Weg, den jemand nimmt, der über die
+  Objektart gekommen ist und jetzt den Umfang sucht.
+
+  Nutzensatz statt Beschreibung: er steht auch in der Kachel auf der
+  Startseite und kommt aus derselben Quelle.
+*/
+interface Props {
+  lead: string;
+  slugs: string[];
+}
+
+const { lead, slugs } = Astro.props;
+
+const gewaehlt = slugs
+  .map((slug) => kacheln.find((k) => k.slug === slug))
+  .filter((k): k is NonNullable<typeof k> => Boolean(k));
+---
+
+<section class="sektion border-t border-line">
+  <div class="wrap">
+    <SectionHeading titel="Welche Leistungen hier greifen" lead={lead} />
+
+    <ul class="mt-10 border-t border-line">
+      {
+        gewaehlt.map((k) => (
+          <li class="border-b border-line">
+            <a
+              href={`${routes.leistungen}/${k.slug}`}
+              class="group grid gap-2 py-7 lg:grid-cols-12 lg:gap-8"
+            >
+              <h3 class="text-h3 font-heading font-semibold text-ink transition-[color] duration-150 group-hover:text-primary-deep lg:col-span-5">
+                {k.titel}
+              </h3>
+              <p class="max-w-[62ch] text-body text-grey lg:col-span-7">{k.nutzen}</p>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

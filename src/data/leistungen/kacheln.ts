@@ -47,7 +47,7 @@ export const kacheln: LeistungKachel[] = [
     slug: 'aussenanlagen-winterdienst',
     titel: 'Außenanlagen und Winterdienst',
     nutzen:
-      'Räumen, Streuen und Pflege der Außenflächen in Ihrem Auftrag. Jeden Einsatz dokumentieren wir mit Uhrzeit.',
+      'Grünpflege, Reinigung der Außenflächen und Winterdienst in Ihrem Auftrag. Jeden Einsatz dokumentieren wir mit Uhrzeit.',
     icon: '/icons/aussenanlagen-winterdienst.png',
     verweisText: 'Zu Außenanlagen und Winterdienst',
   },

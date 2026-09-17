@@ -11,17 +11,18 @@ import SectionHeading from '../ui/SectionHeading.astro';
   Angebot nach der Begehung, nicht auf die Seite.
 */
 interface Props {
+  titel?: string;
   lead: string;
   stufen: { intervall: string; text: string }[];
   zeitfenster: string[];
 }
 
-const { lead, stufen, zeitfenster } = Astro.props;
+const { titel = 'Turnus und Zeitfenster', lead, stufen, zeitfenster } = Astro.props;
 ---
 
 <section class="sektion border-t border-line">
   <div class="wrap">
-    <SectionHeading titel="Turnus und Zeitfenster" lead={lead} />
+    <SectionHeading titel={titel} lead={lead} />
 
     <div class="mt-10 flex max-w-[68ch] flex-col gap-8">
       {

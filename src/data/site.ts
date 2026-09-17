@@ -6,14 +6,14 @@ export const site = {
   name: 'S.mile Facility Services',
 
   /*
-    TODO Kunde: Rechtsform bestätigen. Die gelieferten Angaben — natürliche
-    Person, Wohnanschrift, keine Gesellschaftsform, Steuernummer folgt — deuten
-    auf ein Einzelunternehmen. Für das Impressum nach § 5 DDG muss das eindeutig
-    sein; bei einem Einzelunternehmen gehört der vollständige Name der
-    natürlichen Person hinein, bei einer GmbH die Firmierung plus
-    Geschäftsführung und Handelsregisternummer.
+    Einzelunternehmen, vom Kunden bestätigt. Damit ist „S.mile Facility
+    Services“ eine Geschäftsbezeichnung, keine Firma im Sinne des HGB — im
+    Impressum muss deshalb der vollständige Name der natürlichen Person
+    stehen, die Geschäftsbezeichnung darf daneben genannt werden.
+    Keine Handelsregisternummer, kein Vertretungsberechtigter.
   */
   firmierung: 'S.mile Facility Services',
+  rechtsform: 'Einzelunternehmen',
 
   /*
     Bewusst „Ansprechperson“ und nicht „Inhaberin“ oder „Inhaber“: die Texte
@@ -43,16 +43,38 @@ export const site = {
   plz: '73565',
   ort: 'Spraitbach',
 
-  /* TODO Kunde: Erreichbarkeit im Büro, z. B. „Mo–Fr 8–17 Uhr“. */
-  bueroZeiten: '[TODO: Bürozeiten]',
+  /* Vom Kunden bestätigt. Speist auch openingHoursSpecification im JSON-LD. */
+  bueroZeiten: 'Mo–Fr 9–20 Uhr',
+  /* Maschinenlesbare Fassung derselben Angabe, für die strukturierten Daten. */
+  oeffnungszeiten: {
+    tage: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+    von: '09:00',
+    bis: '20:00',
+  },
 
   /*
-    TODO Kunde: USt-IdNr. beziehungsweise Steuernummer — laut Kunde wird
-    nachgereicht. Wird auf der Startseite nicht angezeigt, gehört aber ins
-    Impressum. Bei Kleinunternehmerregelung nach § 19 UStG genügt die
-    Steuernummer; eine USt-IdNr. ist dann nicht anzugeben.
+    Feld für die Umsatzsteuer-Identifikationsnummer nach § 27a UStG, die
+    § 5 Abs. 1 Nr. 6 DDG „sofern vorhanden“ verlangt. Die gewöhnliche
+    Steuernummer des Finanzamts ist hier NICHT gemeint und gehört nicht
+    ins Impressum. Existiert keine USt-IdNr. (Kleinunternehmerregelung
+    nach § 19 UStG), wird die Zeile im Impressum gelöscht statt gefüllt.
+    Solange nichts vorliegt, bleibt der Marker — ohne diese Angabe ist das
+    Impressum unvollständig.
   */
-  ustId: '[TODO: USt-IdNr. oder Steuernummer]',
+  ustId: '[TODO: USt-IdNr. — vorhanden? Sonst Zeile entfernen]',
+
+  /*
+    Hosting vom Kunden benannt, Serverstandort Frankfurt am Main. Damit
+    liegt der Server in der EU — keine Drittlandübermittlung nach
+    Art. 44 ff. DSGVO für das Hosting selbst, also auch keine
+    Standardvertragsklauseln und kein Transfer Impact Assessment nötig.
+
+    Offen bleibt die genaue juristische Person mit Anschrift und der
+    Auftragsverarbeitungsvertrag nach Art. 28 DSGVO. Beides gehört in die
+    Datenschutzerklärung, und der AV-Vertrag ist Pflicht, nicht optional.
+  */
+  hosting: 'Hostinger',
+  hostingStandort: 'Frankfurt am Main',
 } as const;
 
 /*
@@ -70,11 +92,33 @@ export const site = {
   Redundanz. Ab true wird jede Objektart ihr eigener Link.
   ───────────────────────────────────────────────────────────────────────────
 */
-export const OBJEKTTYP_SEITEN = false;
+export const OBJEKTTYP_SEITEN = true;
 
 export function objekttypHref(slug: string): string {
   return OBJEKTTYP_SEITEN ? `/objekttypen/${slug}` : '/#objekttypen';
 }
+
+/* Dasselbe für die Übersichtsseite — Hauptnavigation und Footer. */
+export function objekttypenHubHref(): string {
+  return OBJEKTTYP_SEITEN ? '/objekttypen' : '/#objekttypen';
+}
+
+/*
+  ───────────────────────────────────────────────────────────────────────────
+  Ziel des Anfrageformulars.
+
+  Eine statische Seite kann ein Formular nicht selbst verarbeiten. Solange
+  hier nichts steht, sendet das Formular per `mailto:` an die Kontaktadresse
+  — das öffnet das Mailprogramm des Absenders mit den ausgefüllten Feldern.
+  Funktioniert bei Outlook und Apple Mail zuverlässig, bei reinen
+  Webmail-Nutzern nicht.
+
+  Sobald ein Endpunkt feststeht (eigenes Skript, Formspree, Netlify Forms
+  oder Ähnliches), hier die URL eintragen — das Formular schaltet dann
+  automatisch auf POST um. Eine Stelle, keine Änderung im Markup.
+  ───────────────────────────────────────────────────────────────────────────
+*/
+export const ANFRAGE_ENDPUNKT = '';
 
 export const routes = {
   anfrage: '/anfrage',

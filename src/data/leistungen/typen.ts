@@ -80,6 +80,13 @@ export interface LeistungInhalt {
   };
 
   turnus: {
+    /*
+      Überschrift des Abschnitts. Standard ist „Turnus und Zeitfenster“.
+      Die Bauendreinigung braucht „Phasen und Zeitfenster“ — dort gibt es
+      keinen Turnus, sondern eine Abfolge von Grob-, Zwischen- und
+      Endreinigung.
+    */
+    titel?: string;
     lead: string;
     stufen: Turnusstufe[];
     /* Wovon der Turnus abhängt und wie die Zeitfenster geregelt werden. */

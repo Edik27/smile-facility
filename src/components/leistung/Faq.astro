@@ -1,16 +1,20 @@
 ---
 import type { FaqEintrag } from '../../data/leistungen';
+import Ausklapper from '../ui/Ausklapper.astro';
 import SectionHeading from '../ui/SectionHeading.astro';
 
 /*
-  Fragen und Antworten als Inhalt für Leser, nicht als SEO-Maßnahme:
-  FAQPage-Markup liefert seit 2023 für gewerbliche Seiten keine Rich Results
-  mehr, Google zeigt sie nur noch für behördliche und medizinische Quellen.
-  Deshalb bewusst ohne Schema-Markup.
+  Fragen und Antworten zum Aufklappen, über <details>/<summary> und damit
+  ohne JavaScript. Die Mechanik steckt in ui/Ausklapper.astro, hier bleibt
+  nur die Liste.
 
-  Kein Akkordeon: das bräuchte JavaScript, und diese Seiten kommen wie die
-  Startseite ohne aus. Vier Fragen offen untereinander liest sich schneller
-  als vier, die man erst aufklappen muss.
+  Bewusst ohne FAQPage-Markup: das liefert seit 2023 für gewerbliche Seiten
+  keine Rich Results mehr. Inhalt in geschlossenen <details> wird von Google
+  normal indexiert — es gibt keinen SEO-Grund, die Antworten offen zu lassen.
+
+  <ul> um die Einträge, damit Screenreader die Anzahl der Fragen ankündigen.
+  Getrennt durch 1px --line, kein Kartencontainer, kein Schatten — gleiches
+  Prinzip wie die Objekttypen-Zeilen.
 */
 interface Props {
   eintraege: FaqEintrag[];
@@ -23,19 +27,14 @@ const { eintraege } = Astro.props;
   <div class="wrap">
     <SectionHeading titel="Fragen, die uns dazu erreichen" />
 
-    <dl class="mt-10 border-t border-line">
+    <ul class="mt-10 border-t border-line">
       {
         eintraege.map((eintrag) => (
-          <div class="grid gap-x-12 gap-y-2 border-b border-line py-8 lg:grid-cols-12">
-            <dt class="text-h3 font-heading font-semibold text-ink lg:col-span-5">
-              {eintrag.frage}
-            </dt>
-            <dd class="max-w-[62ch] text-body text-grey lg:col-span-6 lg:col-start-7">
-              {eintrag.antwort}
-            </dd>
-          </div>
+          <li class="border-b border-line">
+            <Ausklapper frage={eintrag.frage}>{eintrag.antwort}</Ausklapper>
+          </li>
         ))
       }
-    </dl>
+    </ul>
   </div>
 </section>

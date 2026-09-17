@@ -1,0 +1,71 @@
+---
+import CtaAbschluss from '../../components/CtaAbschluss.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+import Leistungen from '../../components/Leistungen.astro';
+import Breadcrumb from '../../components/ui/Breadcrumb.astro';
+import { site } from '../../data/site';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+/*
+  Verteiler, absichtlich kurz. Der Kachelblock ist dieselbe Komponente wie
+  auf der Startseite, nicht eine Kopie.
+
+  Bewusst KEINE Inhalte, die auf den Unterseiten stehen: kein Leistungsumfang,
+  keine Turnusse, keine FAQ. Hub und Unterseite würden sonst in der Suche
+  gegeneinander laufen, und die Unterseite ist die Seite, die ranken soll.
+
+  Der Kachelblock bringt seine eigene <h2> „Leistungen“ mit. Die <h1> hier
+  lautet deshalb anders, damit keine Dopplung entsteht.
+*/
+const title = 'Gebäudereinigung und Facility-Leistungen | S.mile';
+const description =
+  'Sechs Leistungsbereiche für Gewerbeobjekte in Stuttgart: Unterhaltsreinigung, Glasreinigung, Grundreinigung, Bauendreinigung, Winterdienst, Hausmeister.';
+---
+
+<BaseLayout title={title} description={description}>
+  <Header />
+
+  <main id="inhalt">
+    <Breadcrumb stufen={[{ label: 'Start', href: '/' }, { label: 'Leistungen' }]} />
+
+    <div class="wrap pb-4 pt-8 md:pt-10">
+      <h1 class="text-h1 font-heading font-bold text-ink">
+        Was wir für Gewerbeobjekte übernehmen
+      </h1>
+      <p class="mt-6 max-w-[58ch] text-lead text-grey">
+        Sechs Bereiche, einzeln oder zusammen beauftragbar. Was in Ihrem Objekt gilt, steht
+        anschließend im Leistungsverzeichnis — mit Turnus, Umfang und Zuständigkeit je Position.
+      </p>
+      <p class="mt-4 max-w-[58ch] text-body text-grey">
+        Im Einsatz in {site.einsatzgebiet}. Die Begehung und das Leistungsverzeichnis sind
+        kostenlos, unabhängig davon, ob Sie beauftragen.
+      </p>
+    </div>
+
+    <Leistungen />
+
+    <section class="sektion border-t border-line">
+      <div class="wrap grid gap-6 lg:grid-cols-12 lg:gap-16">
+        <div class="lg:col-span-4">
+          <h2 class="text-h2 font-heading font-semibold text-ink">Nach Objektart</h2>
+        </div>
+        <div class="lg:col-span-7 lg:col-start-6">
+          <p class="max-w-[62ch] text-lead text-grey">
+            Dieselbe Leistung läuft in einer Praxis anders als in einer Logistikhalle —
+            andere Zeitfenster, andere Zutrittsregeln, andere Prüfpunkte.
+          </p>
+          <p class="mt-7">
+            <a href="/#objekttypen" class="textlink text-body">
+              Was sich je Objektart unterscheidet
+            </a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <CtaAbschluss />
+  </main>
+
+  <Footer />
+</BaseLayout>
