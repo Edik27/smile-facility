@@ -366,3 +366,102 @@
     }
   }
 }
+
+/*
+  ───────────────────────────────────────────────────────────────────────
+  Seitenübergänge zwischen den Unterseiten.
+
+  Rein CSS: `@view-transition` gilt für Navigationen im selben Dokument-
+  ursprung, also genau für unsere 22 statischen Seiten. Kein Astro-
+  ClientRouter, kein JavaScript, keine Abhängigkeit. Browser, die die
+  Regel nicht kennen, ignorieren sie und laden hart um wie bisher.
+
+  Die Regel steht außerhalb von @layer: `@view-transition` ist eine
+  Top-Level-Regel, in einer Kaskadenschicht ist ihre Wirkung nicht
+  zuverlässig definiert.
+
+  Kopf- und Fußzeile bekommen einen eigenen view-transition-name. Damit
+  wandern sie aus dem Wurzel-Schnappschuss heraus und bleiben beim
+  Wechsel stehen, statt mitzublenden — sie sind auf jeder Seite gleich,
+  und ein blinkendes Logo bei jedem Klick wäre genau der Effekt, den man
+  nicht will. Der Name muss im Dokument eindeutig sein; deshalb sitzt er
+  auf <header> und <footer> und nicht auf LogoLockup, das zweimal
+  vorkommt.
+
+  180ms, dieselbe Kurve wie der Hero-Einstieg. Länger fühlt sich nach
+  Warten an, wenn die Seite ohnehin schon da ist.
+  ───────────────────────────────────────────────────────────────────────
+*/
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-group(root),
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 180ms;
+  animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/*
+  Abschaltung bei reduzierter Bewegung. Kein !important nötig: die
+  Überblendung kommt aus dem Browser-Stylesheet, und Autorenregeln
+  schlagen das UA-Stylesheet ohnehin. Ergebnis ist ein harter, sofortiger
+  Wechsel — also genau der Zustand ohne diese Datei.
+*/
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none;
+  }
+}
+
+.kopfzeile {
+  view-transition-name: kopfzeile;
+}
+.fusszeile {
+  view-transition-name: fusszeile;
+}
+
+/*
+  ───────────────────────────────────────────────────────────────────────
+  Trennlinie der Kopfzeile erscheint erst beim Scrollen.
+
+  Oben auf der Seite braucht die Kopfzeile keine Kante — sie sitzt auf
+  derselben weißen Fläche wie der Inhalt. Sobald gescrollt wird, muss die
+  Grenze sichtbar sein, weil Text darunter wegläuft.
+
+  Scroll-getrieben über `animation-timeline`, also ohne JavaScript und
+  ohne Scroll-Listener. Der Startzustand liegt wie beim Hero in den
+  Keyframes: `from` setzt die Kante auf transparent, das Ziel ist der am
+  Element gesetzte Wert (border-line). Fällt die Animation aus, bleibt
+  die Linie stehen — der heutige Zustand.
+
+  Das @supports ist nicht optional: ohne Unterstützung für
+  animation-timeline würde die Animation auf der Dokumentzeitleiste
+  laufen, mit animation-duration 0s also sofort im Endzustand landen.
+  Der Rückfall wäre dann korrekt, aber nur zufällig; bei einer späteren
+  Änderung der Keyframes wäre er falsch.
+
+  Bewusst NUR die Rahmenfarbe. Eine schrumpfende Kopfzeile wäre optisch
+  reizvoller, verschiebt aber den Inhalt darunter — und weil die Kopfzeile
+  im Fluss Platz belegt, ändert ihre Höhe die Scrollhöhe des Dokuments,
+  was auf den Fortschritt der scroll-getriebenen Animation zurückwirkt.
+  Das kann in ein Flattern laufen. Farbe ist frei von diesem Problem.
+*/
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    .kopfzeile {
+      animation: kopfzeile-kante linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 80px;
+    }
+
+    @keyframes kopfzeile-kante {
+      from {
+        border-bottom-color: transparent;
+      }
+    }
+  }
+}

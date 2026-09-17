@@ -7,7 +7,11 @@ import LogoLockup from './ui/LogoLockup.astro';
 
 /*
   Sticky ab dem ersten Scrollpixel, abgesetzt durch eine 1px-Trennlinie
-  statt eines Schattens. Das mobile Menü läuft über <details>/<summary> —
+  statt eines Schattens. Die Linie erscheint erst nach rund 80px Scrollweg
+  (scroll-getrieben, siehe .kopfzeile in global.css); ganz oben gibt es
+  nichts abzugrenzen. Die Klasse .kopfzeile trägt zusätzlich den
+  view-transition-name, damit die Kopfzeile beim Seitenwechsel stehen
+  bleibt statt mitzublenden. Das mobile Menü läuft über <details>/<summary> —
   korrekte Semantik und Tastaturbedienung ohne eine Zeile JavaScript.
 
   Die Aufklappmenüs für „Leistungen“ und „Objekttypen“ sind die einzige
@@ -24,7 +28,7 @@ import LogoLockup from './ui/LogoLockup.astro';
 const pfad = Astro.url.pathname;
 ---
 
-<header class="sticky top-0 z-50 border-b border-line bg-surface">
+<header class="kopfzeile sticky top-0 z-50 border-b border-line bg-surface">
   <div class="wrap flex h-16 items-center gap-3 md:h-20 md:gap-6">
     <a href="/" class="mr-auto rounded-btn" aria-label="S.mile Facility Services, zur Startseite">
       <LogoLockup />
