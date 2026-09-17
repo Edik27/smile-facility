@@ -1,0 +1,88 @@
+---
+import type { Untermenue } from '../../data/navigation';
+
+/*
+  Aufklappmenü der Kopfzeile.
+
+  Auslöser ist ein <button>, kein Link: ein Link, der gleichzeitig ein Menü
+  öffnet, ist auf Touchgeräten nicht auflösbar — der erste Tipp müsste
+  navigieren und aufklappen zugleich. Die Hub-Seite ist deshalb der erste
+  Eintrag im Panel.
+
+  Das Panel ist ein <ul> mit gewöhnlichen Links. Bewusst KEIN role="menu"
+  und kein role="menuitem": diese Rollen sind für Anwendungsmenüs gedacht
+  und erzeugen bei Screenreadern die Erwartung, dass Pfeiltasten navigieren
+  und Tab das Menü verlässt. Für eine Navigation aus Links ist das falsch —
+  Tab läuft hier normal durch.
+
+  Kein Abstand zwischen Auslöser und Panel: Button und <li> füllen die
+  Kopfzeilenhöhe, das Panel sitzt mit `top-full` direkt an der Unterkante.
+  Eine Lücke würde den Hover brechen, sobald die Maus diagonal wandert.
+  Optische Luft entsteht über die Buttonhöhe, nicht über margin.
+*/
+interface Props {
+  label: string;
+  menue: Untermenue;
+  /* Pfad der aktuellen Seite, zum Markieren des aktiven Eintrags. */
+  pfad: string;
+}
+
+const { label, menue, pfad } = Astro.props;
+
+/* Astro baut Verzeichnis-URLs mit Schrägstrich am Ende — vor dem Vergleich weg. */
+const normal = (wert: string) => wert.replace(/\/+$/, '') || '/';
+const aktuell = normal(pfad);
+---
+
+<li class="menue relative flex h-full items-stretch" data-menue>
+  <button
+    type="button"
+    aria-expanded="false"
+    aria-controls={menue.id}
+    class="flex h-full items-center gap-1.5 text-small text-ink transition-[color] duration-150 hover:text-primary-deep"
+    data-ausloeser
+  >
+    {label}
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.9"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+      class="menue-chevron shrink-0 text-primary"
+    >
+      <path d="M6 9.5l6 6 6-6"></path>
+    </svg>
+  </button>
+
+  <div
+    id={menue.id}
+    class="menue-panel absolute left-0 top-full w-max max-w-[min(22rem,calc(100vw-4rem))] rounded-card border border-line bg-surface py-2"
+  >
+    <ul>
+      {
+        menue.eintraege.map((eintrag) => {
+          const istAktuell = normal(eintrag.href) === aktuell;
+          return (
+            <li>
+              <a
+                href={eintrag.href}
+                aria-current={istAktuell ? 'page' : undefined}
+                class:list={[
+                  'flex min-h-[44px] items-center px-5 py-2.5 text-body transition-[background-color] duration-150 hover:bg-primary-tint',
+                  istAktuell ? 'font-semibold text-primary-deep' : 'text-ink',
+                ]}
+              >
+                {eintrag.label}
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
+</li>

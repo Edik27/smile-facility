@@ -1,8 +1,44 @@
-import { routes } from './site';
+import { kacheln as leistungsKacheln } from './leistungen';
+import { objekttypSeiten } from './objekttypen';
+import { objekttypHref, objekttypenHubHref, routes } from './site';
+
+/*
+  Aufklappmenüs der Kopfzeile. Nur „Leistungen“ und „Objekttypen“ bekommen
+  eins — sie sind die beiden Punkte mit Unterseiten.
+
+  Erster Eintrag ist jeweils die Hub-Seite. Das ist nötig, weil der Auslöser
+  ein <button> und kein Link ist: ein Link, der gleichzeitig ein Menü
+  öffnet, ist auf Touch nicht auflösbar. Über den ersten Panel-Eintrag
+  bleibt der Hub erreichbar.
+*/
+export interface Untermenue {
+  id: string;
+  eintraege: { label: string; href: string }[];
+}
+
+export const untermenues: Record<string, Untermenue> = {
+  Leistungen: {
+    id: 'menue-leistungen',
+    eintraege: [
+      { label: 'Alle Leistungen im Überblick', href: routes.leistungen },
+      ...leistungsKacheln.map((k) => ({
+        label: k.titel,
+        href: `${routes.leistungen}/${k.slug}`,
+      })),
+    ],
+  },
+  Objekttypen: {
+    id: 'menue-objekttypen',
+    eintraege: [
+      { label: 'Alle Objekttypen im Überblick', href: objekttypenHubHref() },
+      ...objekttypSeiten.map((o) => ({ label: o.titel, href: objekttypHref(o.slug) })),
+    ],
+  },
+};
 
 export const hauptnavigation = [
   { label: 'Leistungen', href: routes.leistungen },
-  { label: 'Objekttypen', href: routes.objekttypen },
+  { label: 'Objekttypen', href: objekttypenHubHref() },
   { label: 'Über uns', href: routes.ueberUns },
   /*
     „Referenzen“ war in der Navigation vorgesehen, ist hier aber bewusst
@@ -30,12 +66,12 @@ export const footerSpalten = [
   {
     titel: 'Objekttypen',
     links: [
-      { label: 'Büro- und Verwaltungsgebäude', href: `${routes.objekttypen}/buero` },
-      { label: 'Handel', href: `${routes.objekttypen}/handel` },
-      { label: 'Industrie und Logistik', href: `${routes.objekttypen}/industrie-logistik` },
-      { label: 'Arztpraxen und medizinische Einrichtungen', href: `${routes.objekttypen}/medizin` },
-      { label: 'Hotellerie und Gastronomie', href: `${routes.objekttypen}/hotellerie-gastronomie` },
-      { label: 'Immobilienverwaltungen', href: `${routes.objekttypen}/immobilienverwaltungen` },
+      { label: 'Büro- und Verwaltungsgebäude', href: objekttypHref('buero') },
+      { label: 'Handel', href: objekttypHref('handel') },
+      { label: 'Industrie und Logistik', href: objekttypHref('industrie-logistik') },
+      { label: 'Arztpraxen und medizinische Einrichtungen', href: objekttypHref('medizin') },
+      { label: 'Hotellerie und Gastronomie', href: objekttypHref('hotellerie-gastronomie') },
+      { label: 'Immobilienverwaltungen', href: objekttypHref('immobilienverwaltungen') },
     ],
   },
   {
@@ -50,16 +86,21 @@ export const footerSpalten = [
   },
 ] as const;
 
+/*
+  Rechtliche Links im Footer.
+
+  „Cookie-Einstellungen“ ist entfernt: die Seite setzt keine Cookies, lädt
+  keine externen Skripte und nutzt kein Tracking. Ein Link auf eine
+  Einwilligungsverwaltung, die nichts zu verwalten hat, weckt den falschen
+  Eindruck. Bei Einsatz eines Consent-Tools wieder aufnehmen.
+
+  „AGB“ ist ebenfalls entfernt: Allgemeine Geschäftsbedingungen sind im
+  B2B-Geschäft freiwillig, und sie müssen vom Kunden kommen — ein
+  Platzhaltertext wäre hier gefährlicher als eine fehlende Seite. Sobald
+  echte AGB vorliegen, Zeile einkommentieren und Seite anlegen.
+*/
 export const rechtlicheLinks = [
   { label: 'Impressum', href: routes.impressum },
   { label: 'Datenschutz', href: routes.datenschutz },
-  { label: 'AGB', href: routes.agb },
-  /*
-    TODO: „Cookie-Einstellungen“ ist nur sinnvoll, wenn es überhaupt
-    einwilligungspflichtige Cookies gibt. Aktuell enthält die Seite kein
-    Tracking und keine externen Skripte — der Link führt vorerst auf eine
-    Erklärseite. Bei Einsatz eines Consent-Tools hier auf dessen
-    Öffnen-Funktion umstellen.
-  */
-  { label: 'Cookie-Einstellungen', href: routes.cookies },
+  // { label: 'AGB', href: routes.agb },
 ] as const;

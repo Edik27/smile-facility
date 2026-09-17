@@ -1,14 +1,27 @@
 ---
-import { hauptnavigation } from '../data/navigation';
+import { hauptnavigation, untermenues } from '../data/navigation';
 import { routes } from '../data/site';
 import Button from './ui/Button.astro';
+import Kopfmenue from './ui/Kopfmenue.astro';
 import LogoLockup from './ui/LogoLockup.astro';
 
 /*
   Sticky ab dem ersten Scrollpixel, abgesetzt durch eine 1px-Trennlinie
   statt eines Schattens. Das mobile Menü läuft über <details>/<summary> —
   korrekte Semantik und Tastaturbedienung ohne eine Zeile JavaScript.
+
+  Die Aufklappmenüs für „Leistungen“ und „Objekttypen“ sind die einzige
+  Stelle im Projekt mit JavaScript. Klick, Escape, Klick außerhalb,
+  Fokusverlust und die Absichtsverzögerung beim Hover lassen sich mit CSS
+  allein nicht abbilden. Das Skript steht unten inline — kein Bundle, kein
+  zusätzlicher Request, rund 50 Zeilen.
+
+  Ohne JavaScript greift ein CSS-Rückfall über :focus-within (siehe
+  global.css, .kein-js): der Auslöser öffnet das Panel beim Fokussieren, die
+  Links bleiben also mit der Tastatur erreichbar. Zusätzlich stehen alle
+  Unterseiten im Footer.
 */
+const pfad = Astro.url.pathname;
 ---
 
 <header class="sticky top-0 z-50 border-b border-line bg-surface">
@@ -17,26 +30,30 @@ import LogoLockup from './ui/LogoLockup.astro';
       <LogoLockup />
     </a>
 
-    <nav aria-label="Hauptnavigation" class="hidden lg:block">
-      <ul class="flex items-center gap-7">
+    <nav aria-label="Hauptnavigation" class="hidden h-full lg:block">
+      <ul class="flex h-full items-stretch gap-7">
         {
-          hauptnavigation.map((eintrag) => (
-            <li>
-              <a
-                href={eintrag.href}
-                class="text-small text-ink transition-[color] duration-150 hover:text-primary-deep"
-              >
-                {eintrag.label}
-              </a>
-            </li>
-          ))
+          hauptnavigation.map((eintrag) =>
+            untermenues[eintrag.label] ? (
+              <Kopfmenue label={eintrag.label} menue={untermenues[eintrag.label]} pfad={pfad} />
+            ) : (
+              <li class="flex h-full items-center">
+                <a
+                  href={eintrag.href}
+                  class="text-small text-ink transition-[color] duration-150 hover:text-primary-deep"
+                >
+                  {eintrag.label}
+                </a>
+              </li>
+            ),
+          )
         }
       </ul>
     </nav>
 
     <Button href={routes.anfrage} class="max-md:px-3.5 max-md:py-2.5">Angebot anfordern</Button>
 
-    <details class="burger lg:hidden">
+    <details class="ausklapp burger lg:hidden">
       <summary
         class="flex size-10 items-center justify-center rounded-btn border border-line text-ink"
         aria-label="Menü"
@@ -88,3 +105,100 @@ import LogoLockup from './ui/LogoLockup.astro';
     </details>
   </div>
 </header>
+
+<script is:inline>
+  /*
+    Kopfmenüs: Klick, Hover mit Absichtsverzögerung, Escape, Klick außerhalb,
+    Fokusverlust. Inline, damit kein zusätzlicher Request entsteht.
+
+    Hover nur auf Geräten mit echtem Zeiger — auf Touch löst ein Hover sonst
+    unkontrolliert aus. Die Verzögerungen verhindern, dass sich das Menü beim
+    bloßen Überqueren mit der Maus öffnet.
+  */
+  (function () {
+    document.documentElement.classList.remove('kein-js');
+
+    var menues = Array.prototype.slice.call(document.querySelectorAll('[data-menue]'));
+    if (!menues.length) return;
+
+    var zeigerGenau = window.matchMedia('(hover: hover) and (pointer: fine)');
+    var OEFFNEN_MS = 80;
+    var SCHLIESSEN_MS = 150;
+    var timer = null;
+
+    function ausloeser(menue) {
+      return menue.querySelector('[data-ausloeser]');
+    }
+
+    function setzen(menue, offen) {
+      if (offen) menue.setAttribute('data-offen', '');
+      else menue.removeAttribute('data-offen');
+      ausloeser(menue).setAttribute('aria-expanded', offen ? 'true' : 'false');
+    }
+
+    /* Höchstens ein Menü offen. */
+    function oeffnen(menue) {
+      menues.forEach(function (m) {
+        setzen(m, m === menue);
+      });
+    }
+
+    function alleZu() {
+      menues.forEach(function (m) {
+        setzen(m, false);
+      });
+    }
+
+    function verzoegert(fn, ms) {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(fn, ms);
+    }
+
+    menues.forEach(function (menue) {
+      ausloeser(menue).addEventListener('click', function () {
+        window.clearTimeout(timer);
+        var warOffen = menue.hasAttribute('data-offen');
+        if (warOffen) alleZu();
+        else oeffnen(menue);
+      });
+
+      menue.addEventListener('mouseenter', function () {
+        if (!zeigerGenau.matches) return;
+        verzoegert(function () {
+          oeffnen(menue);
+        }, OEFFNEN_MS);
+      });
+
+      menue.addEventListener('mouseleave', function () {
+        if (!zeigerGenau.matches) return;
+        verzoegert(alleZu, SCHLIESSEN_MS);
+      });
+
+      /*
+        Verlässt der Fokus den Container per Tab, schließt das Menü.
+        relatedTarget ist das neue Ziel; liegt es noch im Menü, nichts tun.
+      */
+      menue.addEventListener('focusout', function (ereignis) {
+        if (!menue.contains(ereignis.relatedTarget)) setzen(menue, false);
+      });
+    });
+
+    document.addEventListener('keydown', function (ereignis) {
+      if (ereignis.key !== 'Escape') return;
+      var offen = menues.filter(function (m) {
+        return m.hasAttribute('data-offen');
+      })[0];
+      if (!offen) return;
+      window.clearTimeout(timer);
+      setzen(offen, false);
+      ausloeser(offen).focus();
+    });
+
+    document.addEventListener('pointerdown', function (ereignis) {
+      var innen = menues.some(function (m) {
+        return m.contains(ereignis.target);
+      });
+      if (!innen) alleZu();
+    });
+  })();
+</script>
