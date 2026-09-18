@@ -1,6 +1,6 @@
 ---
 import Ablauf from '../components/Ablauf.astro';
-import Arbeitsweise from '../components/Arbeitsweise.astro';
+import Aufwand from '../components/Aufwand.astro';
 import CtaAbschluss from '../components/CtaAbschluss.astro';
 import Einsatzgebiet from '../components/Einsatzgebiet.astro';
 import Footer from '../components/Footer.astro';
@@ -9,29 +9,45 @@ import Hero from '../components/Hero.astro';
 import KarriereTeaser from '../components/KarriereTeaser.astro';
 import Leistungen from '../components/Leistungen.astro';
 import Objekttypen from '../components/Objekttypen.astro';
+import Probleme from '../components/Probleme.astro';
+import Testangebot from '../components/Testangebot.astro';
+import Zusagen from '../components/Zusagen.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { site } from '../data/site';
 
 /*
   Title auf 60 Zeichen gehalten, damit Google ihn nicht abschneidet — deshalb
   hier `einsatzstadt` („Stuttgart“) und nicht die Langform.
-  Description 154 Zeichen, ebenfalls innerhalb der Anzeigegrenze.
+
+  „Büro- und Gewerbereinigung“ statt „Gebäudereinigung für Gewerbeimmobilien“:
+  die Zielgruppe sucht nach Büroreinigung, nicht nach dem Fachbegriff der
+  Immobilienwirtschaft. Das ist die einzige Textänderung der Startseite, die
+  nicht nur den Ton betrifft, sondern auch die Sichtbarkeit.
 */
-const title = `Gebäudereinigung für Gewerbeimmobilien in ${site.einsatzstadt} | S.mile`;
-const description = `Unterhaltsreinigung, Glasreinigung und Hausmeisterservice für Gewerbeimmobilien in ${site.einsatzgebiet}. Feste Ansprechperson, kostenlose Objektbegehung.`;
+const title = `Büro- und Gewerbereinigung in ${site.einsatzstadt} | S.mile`;
+const description = `Unterhaltsreinigung, Glasreinigung und Hausmeisterservice für Büros, Praxen und Ladengeschäfte in ${site.einsatzgebiet}. Feste Ansprechperson, Termin vor Ort kostenlos.`;
 ---
 
 <BaseLayout title={title} description={description}>
   <Header />
   <main id="inhalt">
     <Hero />
+    {/* Problem, Aufwand, Zusage — vor den Leistungen. Wer wissen will, was
+        angeboten wird, soll vorher verstanden haben, warum es anders laufen
+        soll. Sektion C traegt die ID #arbeitsweise, auf die Footer und
+        /ueber-uns verweisen. */}
+    <Probleme />
+    <Aufwand />
+    <Zusagen />
     <Leistungen />
     <Objekttypen />
     {/* „Wo arbeitet ihr“ ist die zweite Qualifizierungsfrage nach „für welche
         Objekte“ — deshalb steht der Block hier und nicht am Seitenende. */}
     <Einsatzgebiet />
     <Ablauf />
-    <Arbeitsweise />
+    {/* Risikoabbau kurz vor der Entscheidung — nicht zu verwechseln mit den
+        Zusagen zum laufenden Betrieb weiter oben. */}
+    <Testangebot />
     {/* Platz für einen späteren Referenzblock: <Referenzen /> gehört hierhin. */}
     <KarriereTeaser />
     <CtaAbschluss />

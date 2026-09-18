@@ -1,0 +1,41 @@
+---
+import { testAngebote } from '../data/testangebot';
+
+/*
+  Herausgelöst aus der früheren Sektion „Wie wir arbeiten“, deren Zusagen
+  jetzt in Zusagen.astro stehen.
+
+  Der Block bleibt eigenständig, weil er einen anderen Job macht: die
+  Zusagen in Sektion C betreffen den laufenden Betrieb, hier geht es um das
+  Risiko vor der Unterschrift. Das wirkt kurz vor der Entscheidung, also
+  nach dem Ablauf — nicht im ersten Drittel der Seite.
+
+  Der Kasten liegt auf --base-alt, weil die Sektion auf Weiß steht: ein
+  Rahmen allein auf Weiß trägt die Hervorhebung nicht. Kein Pink, keine
+  neue Farbe — die graue Fläche genügt, und sie ist auf der Seite bereits
+  eingeführt.
+*/
+---
+
+<section class="sektion border-t border-line">
+  <div class="wrap">
+    <div class="rounded-img border border-line bg-surface-alt p-7 md:p-10">
+      <h2 class="max-w-[38ch] text-h3 font-heading font-semibold text-ink">
+        So können Sie uns testen, bevor Sie sich binden
+      </h2>
+      <ul class="mt-6 grid gap-5 lg:grid-cols-2 lg:gap-x-12 lg:gap-y-6">
+        {
+          testAngebote.map((angebot) => (
+            <li class="flex gap-3 text-body text-ink">
+              <span
+                class="mt-[0.6em] size-2 shrink-0 rounded-full bg-primary"
+                aria-hidden="true"
+              />
+              <span class="max-w-[46ch]">{angebot}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>

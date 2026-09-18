@@ -1,0 +1,45 @@
+---
+import { probleme, problemeVorspann } from '../data/praxis';
+import SectionHeading from './ui/SectionHeading.astro';
+
+/*
+  Sektion A der Folge Problem → Aufwand → Zusage.
+
+  Form: drei Textblöcke, Überschrift plus Absatz. Bewusst keine Liste, keine
+  Spalten und keine Trennlinien — die drei Sektionen der Folge sollen
+  unterschiedliche Formen haben, und A ist die einzige, die als Prosa
+  gelesen wird. Ohne Aufzählungspunkte liest man die Sätze, statt sie zu
+  überfliegen.
+
+  Bewusst nicht enthalten: große Ordnungszahlen als Ornament, farbig
+  hinterlegtes Einzelwort in der Überschrift, Icons, Fotos. Das sind die
+  Erkennungszeichen der Vorlage, aus der dieses Muster stammt.
+
+  Kein Pink in dieser Sektion. Die Fläche läuft in --ink und --grey auf
+  --base-alt; Pink markiert ausschließlich die Antworten in Sektion C.
+  Damit trägt die Farbe Bedeutung statt Stimmung.
+
+  A und B teilen ein durchgehendes --base-alt-Feld: `pb-0` hier, `pt-0`
+  dort, getrennt nur durch eine Haarlinie. Zwei getrennte graue Flächen
+  würden aus dem Übergang einen zweiten Auftritt machen.
+*/
+---
+
+<section id="praxis" class="sektion bg-surface-alt pb-0">
+  <div class="wrap">
+    <SectionHeading titel="Was in der Praxis schiefgeht" lead={problemeVorspann} />
+
+    <div class="mt-12 flex flex-col gap-10 md:mt-14 md:gap-12">
+      {
+        probleme.map((problem) => (
+          <article>
+            <h3 class="max-w-[38ch] text-h3 font-heading font-semibold text-ink">
+              {problem.titel}
+            </h3>
+            <p class="mt-3 max-w-[62ch] text-body text-grey">{problem.text}</p>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

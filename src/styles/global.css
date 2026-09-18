@@ -121,24 +121,7 @@
     hyphenate-limit-chars: 8 4 3;
   }
 
-  /*
-    Nur die Hero-Headline der Startseite wird nicht automatisch getrennt: in
-    Verbindung mit text-wrap: balance setzt Chrome dort Trennstriche an
-    unschönen Stellen. Stattdessen steht im Text ein weiches Trennzeichen
-    (&shy;) an der fachlich richtigen Stelle — „Gewerbe-/immobilien“.
-
-    Die Regel hing vorher an `h1` und galt damit für jede Seite. Auf
-    /objekttypen/immobilienverwaltungen lief die H1 dadurch 46px über den
-    Viewport: das Wort ist 22 Zeichen lang, konnte nicht trennen und nicht
-    umbrechen. Alle übrigen H1 nutzen jetzt die automatische Trennung aus
-    der Regel oben.
-  */
-  .headline-hero {
-    hyphens: manual;
-    overflow-wrap: normal;
-  }
-
-  p {
+    p {
     text-wrap: pretty;
   }
 

@@ -1,0 +1,55 @@
+---
+import { aufwand, aufwandVorspann } from '../data/praxis';
+import SectionHeading from './ui/SectionHeading.astro';
+
+/*
+  Sektion B der Folge. Die kürzeste der drei und absichtlich die
+  leiseste: ein Übergang von den Problemen zu den Zusagen, kein eigener
+  Auftritt.
+
+  Deshalb `as="h2"` mit `size="h3"` — semantisch gleichrangig zu A und C,
+  optisch untergeordnet. Deshalb auch kein eigener grauer Block, sondern
+  dasselbe --base-alt-Feld wie A, abgesetzt durch eine Haarlinie.
+
+  Form: eine knappe Reihe. Vier Punkte, auf großen Breiten nebeneinander,
+  getrennt durch senkrechte Haarlinien statt durch Aufzählungspunkte. Das
+  hält die Sektion frei von Pink (das gehört Sektion C) und unterscheidet
+  sie von A (Prosa) und C (zweispaltige Paare).
+
+  Bewusst keine grauen Kachelkästen mit Icon: das ist das Muster, das
+  diese Sektion in der Vorlage hat, und es macht aus vier kurzen Sätzen
+  vier Kacheln, die wichtiger aussehen, als sie sind.
+
+  Kein Punkt nennt einen Betrag. Der Aufwand dieser Zielgruppe ist Zeit,
+  nicht Geld — eine erfundene Kostenrechnung wäre hier das Erste, was
+  auffliegt.
+*/
+---
+
+<section class="sektion bg-surface-alt pt-0">
+  <div class="wrap border-t border-line pt-12 md:pt-14">
+    <SectionHeading
+      titel="Was das im Betrieb kostet"
+      lead={aufwandVorspann}
+      as="h2"
+      size="h3"
+    />
+
+    <ul class="mt-8 grid gap-6 sm:grid-cols-2 sm:gap-x-10 lg:grid-cols-4 lg:gap-x-0">
+      {
+        aufwand.map((punkt, i) => (
+          <li
+            class:list={[
+              'max-w-[38ch] text-body text-ink',
+              /* Senkrechte Haarlinie nur, wo die Reihe wirklich vierspaltig
+                 steht — sonst trennte sie Punkte, die untereinander liegen. */
+              i > 0 && 'lg:border-l lg:border-line lg:pl-6',
+            ]}
+          >
+            {punkt}
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

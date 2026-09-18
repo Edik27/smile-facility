@@ -1,0 +1,95 @@
+---
+import {
+  weitereZusagen,
+  weitereZusagenTitel,
+  zusagenPaare,
+  zusagenVorspann,
+} from '../data/praxis';
+import SectionHeading from './ui/SectionHeading.astro';
+
+/*
+  Sektion C der Folge — und der Ersatz für die frühere Sektion „Wie wir
+  arbeiten“. Beide nebeneinander hätten dasselbe zweimal gesagt; die
+  Paarung von Problem und Zusage ist der ganze Grund für diese Folge, und
+  ein Verweis auf einen Block vier Sektionen weiter unten hätte sie
+  zerlegt.
+
+  Die ID #arbeitsweise bleibt deshalb hier: Footer und /ueber-uns
+  verlinken darauf. Ohne die Übernahme wären das zwei tote Anker.
+
+  Form: zweispaltige Gegenüberstellung. Links die Wiederaufnahme des
+  Problems, rechts die Zusage — auf einer Höhe, damit die Zuordnung ohne
+  Lesen erkennbar ist. Als <dl>, weil genau das die Beziehung ist: der
+  Begriff links, seine Auflösung rechts.
+
+  Zur Hierarchie: das Problem steht klein in --grey mit der Vorzeile „In
+  der Praxis“, die Zusage groß in --ink mit dem pinken Punkt. Damit ist
+  auch auf schmalen Breiten, wo die Spalten untereinander rutschen,
+  eindeutig, was Rückblick und was Zusage ist. Die Vorzeile kostet vier
+  Wörter und ersetzt jede Erklärung.
+
+  Pink kommt auf der ganzen Folge nur hier vor und nur auf den Zusagen.
+  Als Punkt, nicht als Fläche — der einzige vollflächige --primary-Block
+  der Seite bleibt der Abschluss-CTA.
+
+  Der Absatz unter der Zusage ist um die Breite von Punkt und Abstand
+  eingerückt (pl-5 = size-2 plus gap-3), damit er an der Zusage hängt und
+  nicht am Punkt.
+*/
+---
+
+<section id="arbeitsweise" class="sektion">
+  <div class="wrap">
+    <SectionHeading titel="Was wir dagegen zusagen" lead={zusagenVorspann} />
+
+    <dl class="mt-12 border-t border-line md:mt-14">
+      {
+        zusagenPaare.map((paar) => (
+          <div class="grid gap-x-8 gap-y-4 border-b border-line py-8 lg:grid-cols-12 lg:py-10">
+            <dt class="lg:col-span-4">
+              <span class="block text-small text-grey">In der Praxis</span>
+              <span class="mt-1 block max-w-[34ch] text-body font-heading font-semibold text-grey">
+                {paar.problem}
+              </span>
+            </dt>
+
+            <dd class="lg:col-span-7 lg:col-start-6">
+              <div class="flex gap-3">
+                <span
+                  class="mt-[0.55em] size-2 shrink-0 rounded-full bg-primary"
+                  aria-hidden="true"
+                />
+                <span class="text-h3 font-heading font-semibold text-ink">{paar.titel}</span>
+              </div>
+              <p class="mt-2 max-w-[62ch] pl-5 text-body text-grey">{paar.text}</p>
+            </dd>
+          </div>
+        ))
+      }
+
+      <div class="grid gap-x-8 gap-y-4 border-b border-line py-8 lg:grid-cols-12 lg:py-10">
+        <dt class="lg:col-span-4">
+          <span class="block max-w-[34ch] text-body font-heading font-semibold text-grey">
+            {weitereZusagenTitel}
+          </span>
+        </dt>
+
+        <dd class="lg:col-span-7 lg:col-start-6">
+          <ul class="flex flex-col gap-4">
+            {
+              weitereZusagen.map((zusage) => (
+                <li class="flex gap-3 text-body text-ink">
+                  <span
+                    class="mt-[0.6em] size-2 shrink-0 rounded-full bg-primary"
+                    aria-hidden="true"
+                  />
+                  <span class="max-w-[58ch]">{zusage}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </dd>
+      </div>
+    </dl>
+  </div>
+</section>

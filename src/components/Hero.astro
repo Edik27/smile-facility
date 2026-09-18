@@ -22,18 +22,28 @@ import Button from './ui/Button.astro';
   Spalten, und die DOM-Reihenfolge innerhalb der Spalten greift.
 */
 
+/*
+  `wert` muss dem Slug entsprechen, den /anfrage aus ?objekt= ausliest —
+  sonst bleibt die Vorauswahl dort stumm. Vier der sechs Werte stimmten
+  vorher nicht (buerogebaeude/buero, handelsflaeche/handel, praxis/medizin,
+  hotel-gastronomie/hotellerie-gastronomie), die Vorauswahl griff also nur
+  bei „Industrie und Logistik“ und „Mehrere Objekte“.
+
+  Die Beschriftungen sind bewusst Alltagswörter: die Zielgruppe hat kein
+  Gebäudemanagement, sie hat ein Büro oder einen Laden.
+*/
 const objektarten = [
-  { wert: 'buerogebaeude', label: 'Bürogebäude' },
-  { wert: 'handelsflaeche', label: 'Handelsfläche' },
-  { wert: 'industrie-logistik', label: 'Industrie und Logistik' },
-  { wert: 'praxis', label: 'Praxis' },
-  { wert: 'hotel-gastronomie', label: 'Hotel und Gastronomie' },
-  { wert: 'mehrere-objekte', label: 'Mehrere Objekte' },
+  { wert: 'buero', label: 'Büro' },
+  { wert: 'handel', label: 'Ladengeschäft' },
+  { wert: 'industrie-logistik', label: 'Betrieb, Lager oder Logistik' },
+  { wert: 'medizin', label: 'Praxis' },
+  { wert: 'hotellerie-gastronomie', label: 'Hotel oder Gastronomie' },
+  { wert: 'mehrere-objekte', label: 'Mehrere Standorte' },
 ];
 
 const vertrauenssignale = [
   `Im Einsatz in ${site.einsatzgebiet}`,
-  'Kostenlose Objektbegehung mit schriftlichem Leistungsverzeichnis',
+  'Wir sehen uns Ihre Räume an und halten schriftlich fest, was gemacht wird — kostenlos',
   'Rückruf innerhalb eines Werktags',
 ];
 ---
@@ -41,13 +51,13 @@ const vertrauenssignale = [
 <section class="pb-20 pt-9 md:pb-28 md:pt-16">
   <div class="wrap grid items-start lg:grid-cols-12 lg:gap-x-16">
     <div class="contents lg:col-span-6 lg:block lg:min-w-0">
-      <h1 class="headline-hero hero-in hero-in-1 order-1 text-h1 font-heading font-bold text-ink">
-        <Fragment set:html="Gewerbe&shy;immobilien, um die Sie sich nicht kümmern müssen." />
+      <h1 class="hero-in hero-in-1 order-1 text-h1 font-heading font-bold text-ink">
+        Reinigung, die läuft, ohne dass Sie sie betreuen müssen.
       </h1>
 
       <p class="hero-in hero-in-2 order-2 mt-5 max-w-[54ch] text-lead text-grey md:mt-6">
-        Unterhaltsreinigung, Glasreinigung und Hausmeisterservice für Büro-, Handels- und
-        Logistikflächen in {site.einsatzgebiet}.
+        Unterhaltsreinigung, Glasreinigung und Hausmeisterservice für Büros, Praxen,
+        Ladengeschäfte und Betriebsstandorte in {site.einsatzgebiet}.
       </p>
 
       <ul class="hero-in hero-in-4 order-4 mt-9 flex flex-col gap-3 lg:mt-8">
@@ -95,7 +105,7 @@ const vertrauenssignale = [
         class="hero-in hero-in-3 order-3 mt-9 rounded-card border border-line bg-surface p-5 md:p-7 lg:relative lg:z-10 lg:-mt-20 lg:ml-12 lg:mr-0"
       >
         <label for="objektart" class="block text-h3 font-heading font-semibold text-ink">
-          Um welches Objekt geht es?
+          Um welche Räume geht es?
         </label>
         <p class="mt-2 text-small text-grey">Ihre Auswahl übernehmen wir in das Anfrageformular.</p>
 
